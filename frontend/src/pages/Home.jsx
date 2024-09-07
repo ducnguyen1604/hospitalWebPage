@@ -14,6 +14,7 @@ import icon03 from '../assets/images/icon03.png'
 import featureImg from '../assets/images/feature-img.png'
 import videoIcon from '../assets/images/video-icon.png'
 import avatarIcon from '../assets/images/avatar-icon.png'
+import DoctorList from '../components/Doctor/DoctorList'
 
 const Home = () => {
     return <>
@@ -175,18 +176,29 @@ const Home = () => {
                                     </span>
                                 </div>
 
-
-                                <div  className='flex items-center gap-[6px] lg:gap-[10px] mt-2 lg:mt-[18px]'>
+                                <div className='flex items-center gap-[6px] lg:gap-[10px] mt-2 lg:mt-[18px]'>
                                     <img src={avatarIcon} alt="ava" />
                                     <h4 className='text-[10px] leading-3 lg:text-[16px] lg:leading-[22px] font-[700] text-headingColor'>Jonny Sins</h4>
 
                                 </div>
-
                             </div>
                         </div>
-
-
                     </div>
+                </div>
+            </section>
+
+            {/* <!-- Great Doctor --> */}
+            <section>
+                <div className='container'>
+                    <div className='xl:w-[450px] mx-auto'>
+                        <h2 className='heading text-center'>
+                           Our Great Doctor
+                        </h2>
+                        <p className='text__para text-center'>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum.
+                        </p>
+                    </div>
+                    <DoctorList />
                 </div>
             </section>
 
