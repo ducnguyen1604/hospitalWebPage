@@ -4,6 +4,7 @@ import { BsArrowRight } from 'react-icons/bs'
 
 import About from '../components/About/About'
 import ServicesList from '../components/Services/ServicesList'
+import DoctorList from '../components/Doctor/DoctorList'
 
 import heroImg01 from '../assets/images/hero-img01.jpeg'
 import heroImg02 from '../assets/images/hero-img02.png'
@@ -14,7 +15,10 @@ import icon03 from '../assets/images/icon03.png'
 import featureImg from '../assets/images/feature-img.png'
 import videoIcon from '../assets/images/video-icon.png'
 import avatarIcon from '../assets/images/avatar-icon.png'
-import DoctorList from '../components/Doctor/DoctorList'
+import faqImg from '../assets/images/faq-img.png'
+import Faqlist from '../components/FAQ/Faqlist'
+
+
 
 const Home = () => {
     return <>
@@ -103,7 +107,7 @@ const Home = () => {
                             <div className='mt-[30px]'>
                                 <h2 className='text-[26px] leading-9 text-headingColor font-[700] text-center'>Find a Center</h2>
                                 <p className='text-[16px] leading-7 text-textColor font-[400] mt-4 text-center'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut elit mollis, elementum nulla id, scelerisque sapien. Morbi in mollis erat.</p>
-                                <Link to='/doctor' className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[30px] mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
+                                <Link to='/doctors' className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[30px] mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
                                     <BsArrowRight />
                                 </Link>
                             </div>
@@ -115,7 +119,7 @@ const Home = () => {
                             <div className='mt-[30px]'>
                                 <h2 className='text-[26px] leading-9 text-headingColor font-[700] text-center'>Book an Appointment</h2>
                                 <p className='text-[16px] leading-7 text-textColor font-[400] mt-4 text-center'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut elit mollis, elementum nulla id, scelerisque sapien. Morbi in mollis erat.</p>
-                                <Link to='/doctor' className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[30px] mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
+                                <Link to='/doctors' className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[30px] mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
                                     <BsArrowRight />
                                 </Link>
                             </div>
@@ -199,6 +203,21 @@ const Home = () => {
                         </p>
                     </div>
                     <DoctorList />
+                </div>
+            </section>
+
+            {/* <!-- FAQ --> */}
+            <section>
+                <div className='container'>
+                    <div className='flex justify-between gap-[50px] lg:gap-0'>
+                        <div className='w-1/2 hidden md:block'>
+                            <img src={faqImg} alt="" />
+                        </div>
+                        <div className='w-full md:w-1/2'>
+                            <h2 className='heading'>Most Frequenly Asked Questions</h2>
+                            <Faqlist />
+                        </div>
+                    </div>
                 </div>
             </section>
 
