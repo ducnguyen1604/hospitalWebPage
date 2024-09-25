@@ -1,6 +1,6 @@
 <?php
 
-require 'vendor/autoload.php'; // Load Composer dependencies (JWT, dotenv, etc.)
+require __DIR__ . '/../vendor/autoload.php'; // Load Composer dependencies (JWT, dotenv, etc.)
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
