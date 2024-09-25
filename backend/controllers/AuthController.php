@@ -130,7 +130,7 @@ class AuthController
                 return json_encode(['status' => 400, 'message' => 'Invalid credentials']);
             }
 
-            // Generate a token (optional, implement your own logic)
+            // Generate a token
             $token = $this->generateToken($user);
 
             // Prepare response data
@@ -151,7 +151,7 @@ class AuthController
     { {
             $secretKey = $_ENV['JWT_SECRET_KEY']; // JWT secret key from .env
             $issuedAt = time(); // Current timestamp
-            $expirationTime = $issuedAt + (60 * 60); // Token valid for 1 hour
+            $expirationTime = $issuedAt + (90 * 24 * 60 * 60); // Token valid for 3 months
 
             // Token payload with user information
             $payload = [
