@@ -6,9 +6,11 @@ error_reporting(E_ALL);
 
 // Include the necessary files
 require_once __DIR__ . '/../controllers/UserController.php';
+require_once __DIR__ . '/../auth/verifyToken.php';
 
 // Initialize the UserController
 $userController = new UserController();
+$tokenMiddleware = new TokenMiddleware();
 
 // Get the current URL path (for routing)
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -21,6 +23,15 @@ header('Content-Type: application/json');
 switch ($url) {
     case '/hospitalWebPage/backend/api/v1/users/updateUser':
         if ($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') {
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['patient'];
+            $tokenMiddleware->restrict($allowedRoles, $authResult);
+
             $id = $_GET['id'] ?? null;
             if ($id) {
                 // Get the JSON input data
@@ -46,6 +57,16 @@ switch ($url) {
     case '/hospitalWebPage/backend/api/v1/users/deleteUser':
         // Handle DELETE request for deleting a user
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['patient'];
+            $tokenMiddleware->restrict($allowedRoles, $authResult);
+
             $id = $_GET['id'] ?? null;
 
             if ($id) {
@@ -63,6 +84,16 @@ switch ($url) {
     case '/hospitalWebPage/backend/api/v1/users/getUser':
         // Handle GET request for retrieving a single user
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['patient'];
+            $tokenMiddleware->restrict($allowedRoles, $authResult);
+
             $id = $_GET['id'] ?? null;
 
             if ($id) {
@@ -78,8 +109,21 @@ switch ($url) {
         }
         break;
     case '/hospitalWebPage/backend/api/v1/users/getAllUsers':
-        // Handle GET request for retrieving all users
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+
+            // Initialize TokenMiddleware
+            $tokenMiddleware = new TokenMiddleware();
+
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['admin'];
+            $tokenMiddleware->restrict($allowedRoles, $authResult);
+
+            // If the user is authorized, proceed with fetching all users
             $response = $userController->getAllUsers();
             echo $response;
         } else {
