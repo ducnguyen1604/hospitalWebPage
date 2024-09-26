@@ -1,9 +1,9 @@
 <?php
 // Include the necessary files
-require_once __DIR__ . '../../models/User.php';
+require_once __DIR__ . '../../models/Doctor.php';
 require_once __DIR__ . '../../config/Database.php';
 
-class UserController
+class DoctorController
 {
     private $conn;
 
@@ -14,34 +14,38 @@ class UserController
         $this->conn = $database->connect();
     }
 
-    // Update User (already provided)
-    public function updateUser($id, $userData)
+    // Update Doctor
+    public function updateDoctor($id, $doctorData)
     {
         try {
-            $query = "UPDATE users SET 
+            $query = "UPDATE doctors SET 
                         email = :email,
                         name = :name,
                         phone = :phone,
                         role = :role,
                         gender = :gender,
-                        photo = :photo
+                        photo = :photo,
+                        specialization = :specialization,
+                        isApproved = :isApproved
                       WHERE id = :id";
 
             $stmt = $this->conn->prepare($query);
 
-            $stmt->bindParam(':email', $userData['email']);
-            $stmt->bindParam(':name', $userData['name']);
-            $stmt->bindParam(':phone', $userData['phone']);
-            $stmt->bindParam(':role', $userData['role']);
-            $stmt->bindParam(':gender', $userData['gender']);
-            $stmt->bindParam(':photo', $userData['photo']);
+            $stmt->bindParam(':email', $doctorData['email']);
+            $stmt->bindParam(':name', $doctorData['name']);
+            $stmt->bindParam(':phone', $doctorData['phone']);
+            $stmt->bindParam(':role', $doctorData['role']);
+            $stmt->bindParam(':gender', $doctorData['gender']);
+            $stmt->bindParam(':photo', $doctorData['photo']);
+            $stmt->bindParam(':specialization', $doctorData['specialization']);
+            $stmt->bindParam(':isApproved', $doctorData['isApproved']);
             $stmt->bindParam(':id', $id);
 
             if ($stmt->execute()) {
                 return json_encode([
                     'success' => true,
                     'message' => 'Successfully updated',
-                    'data' => $this->getUserById($id)
+                    'data' => $this->getDoctorById($id)
                 ]);
             } else {
                 return json_encode([
@@ -57,11 +61,11 @@ class UserController
         }
     }
 
-    // Helper method to get user by ID
-    public function getUserById($id)
+    // Helper method to get doctor by ID
+    public function getDoctorById($id)
     {
         try {
-            $query = "SELECT * FROM users WHERE id = :id";
+            $query = "SELECT * FROM doctors WHERE id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
@@ -72,23 +76,23 @@ class UserController
         }
     }
 
-    // Function to delete a user by ID
-    public function deleteUser($id)
+    // Function to delete a doctor by ID
+    public function deleteDoctor($id)
     {
         try {
-            $query = "DELETE FROM users WHERE id = :id";
+            $query = "DELETE FROM doctors WHERE id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
 
             if ($stmt->execute()) {
                 return json_encode([
                     'success' => true,
-                    'message' => 'User successfully deleted'
+                    'message' => 'Doctor successfully deleted'
                 ]);
             } else {
                 return json_encode([
                     'success' => false,
-                    'message' => 'Failed to delete user'
+                    'message' => 'Failed to delete doctor'
                 ]);
             }
         } catch (PDOException $e) {
@@ -99,22 +103,22 @@ class UserController
         }
     }
 
-    // Function to get a single user by ID
-    public function getSingleUser($id)
+    // Function to get a single doctor by ID
+    public function getSingleDoctor($id)
     {
         try {
-            $user = $this->getUserById($id);
-            if ($user) {
-                unset($user['password']);
+            $doctor = $this->getDoctorById($id);
+            if ($doctor) {
+                unset($doctor['password']);
                 return json_encode([
                     'success' => true,
-                    'message' => 'User found',
-                    'data' => $user
+                    'message' => 'Doctor found',
+                    'data' => $doctor
                 ]);
             } else {
                 return json_encode([
                     'success' => false,
-                    'message' => 'No user found'
+                    'message' => 'No doctor found'
                 ]);
             }
         } catch (PDOException $e) {
@@ -125,30 +129,45 @@ class UserController
         }
     }
 
-    // Function to get all users
-    public function getAllUsers()
+    // Function to get all doctors with search functionality
+    public function getAllDoctors($searchQuery = null)
     {
         try {
-            $query = "SELECT * FROM users";
+            // Base query to select doctors who are approved
+            $query = "SELECT * FROM doctors WHERE isApproved = 'approved'";
+
+            // If there is a search query, add conditions for name or specialization
+            if (!empty($searchQuery)) {
+                $query .= " AND (name LIKE :query OR specialization LIKE :query)";
+            }
+
             $stmt = $this->conn->prepare($query);
+
+            // Bind the search query parameter if present
+            if (!empty($searchQuery)) {
+                $searchPattern = '%' . $searchQuery . '%';
+                $stmt->bindParam(':query', $searchPattern);
+            }
+
             $stmt->execute();
 
-            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            // Remove the password field from each user in the result set
-            foreach ($users as &$user) {
-                unset($user['password']);
+            $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Remove the password field from each doctor in the result set
+            foreach ($doctors as &$doctor) {
+                unset($doctor['password']);
             }
 
-            if ($users) {
+            if ($doctors) {
                 return json_encode([
                     'success' => true,
-                    'message' => 'Users found',
-                    'data' => $users
+                    'message' => 'Doctors found',
+                    'data' => $doctors
                 ]);
             } else {
                 return json_encode([
                     'success' => false,
-                    'message' => 'No users found'
+                    'message' => 'No doctors found'
                 ]);
             }
         } catch (PDOException $e) {

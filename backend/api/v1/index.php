@@ -21,6 +21,9 @@ if (strpos($url, '/hospitalWebPage/backend/api/v1/auth') === 0) {
     require_once __DIR__ . '/../../routes/auth.php';
 } elseif (strpos($url, '/hospitalWebPage/backend/api/v1/users') === 0) {
     require_once __DIR__ . '/../../routes/user.php';
+} elseif (strpos($url, '/hospitalWebPage/backend/api/v1/doctors') === 0) {
+    // Route for doctors added
+    require_once __DIR__ . '/../../routes/doctor.php';
 } else {
     // If no route matches, return a 404 response
     http_response_code(404);

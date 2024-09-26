@@ -12,6 +12,7 @@ class Doctor
     public $gender;
     public $blood_type;
     public $is_available;
+    public $isApproved;
 
     public function __construct($db)
     {
@@ -22,7 +23,7 @@ class Doctor
     public function create()
     {
         $query = 'INSERT INTO ' . $this->table . ' 
-                  SET name = :name, specialization = :specialization, phone = :phone, photo = :photo, gender = :gender, blood_type = :blood_type, is_available = :is_available';
+                  SET name = :name, specialization = :specialization, phone = :phone, photo = :photo, gender = :gender, blood_type = :blood_type, is_available = :is_available,isApproved = :isApproved,';
 
         $stmt = $this->conn->prepare($query);
 
@@ -34,6 +35,7 @@ class Doctor
         $stmt->bindParam(':gender', $this->gender);
         $stmt->bindParam(':blood_type', $this->blood_type);
         $stmt->bindParam(':is_available', $this->is_available, PDO::PARAM_BOOL);
+        $stmt->bindParam(':isApproved', $this->isApproved);
 
         // Execute query
         if ($stmt->execute()) {
