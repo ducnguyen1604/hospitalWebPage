@@ -21,6 +21,17 @@ header('Content-Type: application/json');
 switch ($url) {
     case '/hospitalWebPage/backend/api/v1/doctors/updateDoctor':
         if ($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') {
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['admin', 'doctor']; // Adjust the roles as per your needs
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
+
             $id = $_GET['id'] ?? null;
             if ($id) {
                 // Get the JSON input data
@@ -47,6 +58,18 @@ switch ($url) {
     case '/hospitalWebPage/backend/api/v1/doctors/deleteDoctor':
         // Handle DELETE request for deleting a doctor
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['admin'];
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
+
             $id = $_GET['id'] ?? null;
 
             if ($id) {
@@ -65,6 +88,17 @@ switch ($url) {
     case '/hospitalWebPage/backend/api/v1/doctors/getDoctor':
         // Handle GET request for retrieving a single doctor
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['admin'];
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
             $id = $_GET['id'] ?? null;
 
             if ($id) {
@@ -81,6 +115,16 @@ switch ($url) {
         break;
 
     case '/hospitalWebPage/backend/api/v1/doctors/getAllDoctors':
+        // Get request headers for token verification
+        $requestHeaders = getallheaders();
+
+        // Authenticate token
+        $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+        // Restrict access based on roles
+        $allowedRoles = ['admin'];
+        $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
         // Handle GET request for retrieving all doctors
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $searchQuery = $_GET['query'] ?? null;

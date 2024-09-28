@@ -30,7 +30,7 @@ switch ($url) {
 
             // Restrict access based on roles
             $allowedRoles = ['patient'];
-            $tokenMiddleware->restrict($allowedRoles, $authResult);
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
             $id = $_GET['id'] ?? null;
             if ($id) {
@@ -65,7 +65,7 @@ switch ($url) {
 
             // Restrict access based on roles
             $allowedRoles = ['patient'];
-            $tokenMiddleware->restrict($allowedRoles, $authResult);
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
             $id = $_GET['id'] ?? null;
 
@@ -87,12 +87,13 @@ switch ($url) {
 
             // Get request headers for token verification
             $requestHeaders = getallheaders();
+            echo json_encode($requestHeaders);
             // Authenticate token
             $authResult = $tokenMiddleware->authenticate($requestHeaders);
 
             // Restrict access based on roles
             $allowedRoles = ['patient'];
-            $tokenMiddleware->restrict($allowedRoles, $authResult);
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
             $id = $_GET['id'] ?? null;
 
@@ -121,7 +122,7 @@ switch ($url) {
 
             // Restrict access based on roles
             $allowedRoles = ['admin'];
-            $tokenMiddleware->restrict($allowedRoles, $authResult);
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
             // If the user is authorized, proceed with fetching all users
             $response = $userController->getAllUsers();

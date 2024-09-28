@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../../config/Database.php';
 
 
-echo 'Server is running on port: ' . $_SERVER['SERVER_PORT'] . '<br>';
+// echo 'Server is running on port: ' . $_SERVER['SERVER_PORT'] . '<br>';
 
 // Check the URL path
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
