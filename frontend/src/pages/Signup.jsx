@@ -70,17 +70,22 @@ const Signup = () => {
 
     try {
       console.log("okela")
-
+      console.log([...data]);
       const response = await fetch('http://localhost:80/hospitalWebPage/backend/api/v1/auth/register', { // Replace with your API endpoint
-        mode: 'no-cors',
         method: 'POST',
-        body: data, // Ensure this is the correct data
+        body: data,
+        headers: {
+          'Accept': 'application/json', // Accept JSON responses
+          // Do not set 'Content-Type' manually as `FormData` handles it automatically
+        },
   });
 
       if (!response.ok) {
         // Handle errors
-        const errorData = await response.json();
-        console.error('Error:', errorData);
+        // const errorData = await response.json();
+        // console.error('Error:', errorData);
+        const errorText = await response.text(); // Get the error as text
+        console.error('Error:', errorText);
         // Optionally, set error messages in state to display to the user
       } else {
         // Handle successful signup, e.g., redirect to login
@@ -217,7 +222,7 @@ const Signup = () => {
           <div className='mt-7'>
             <button 
               type='submit' 
-
+              onSubmit={submitHandler} 
               className={`w-full bg-primaryColor rounded-lg text-white text-[18px] leading-[30px] px-4 py-4  transform transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700 ${
                 passwordError ? 'opacity-50 cursor-not-allowed' : ''
               }`}

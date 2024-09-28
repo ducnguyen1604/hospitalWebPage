@@ -40,35 +40,31 @@ class ReviewController
     }
 
     // Function to create a new review
-    public function createReview($reviewData)
+    // Function to create a new review
+    public function createReview($reviewData, $doctorId, $userId)
     {
-        // Set the doctor and user IDs if not present in the body
-        $doctorId = $reviewData['doctor_id'] ?? null;
-        $userId = $reviewData['user_id'] ?? null;
+        // Validate required fields
+        if (empty($doctorId) || empty($userId) || empty($reviewData['reviewText']) || empty($reviewData['rating'])) {
 
-        // If doctor or user ID is missing, handle them here (assumes route parameters)
-        if (!$doctorId || !$userId) {
-            return json_encode([
-                'success' => false,
-                'message' => 'Doctor ID or User ID is missing'
-            ]);
+
+            return json_encode(['success' => false, 'message' => 'Doctor ID, User ID, comment, or rating is missing']);
         }
 
         // Set new review data
         $newReview = [
             'doctor_id' => $doctorId,
             'user_id' => $userId,
-            'comment' => $reviewData['comment'],
+            'reviewText' => $reviewData['reviewText'],
             'rating' => $reviewData['rating']
         ];
 
         // Prepare and execute query to save the new review
         try {
-            $query = "INSERT INTO reviews (doctor_id, user_id, comment, rating) VALUES (:doctor_id, :user_id, :comment, :rating)";
+            $query = "INSERT INTO reviews (doctor_id, user_id, reviewText, rating) VALUES (:doctor_id, :user_id, :reviewText, :rating)";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':doctor_id', $newReview['doctor_id']);
-            $stmt->bindParam(':user_id', $newReview['user_id']);
-            $stmt->bindParam(':comment', $newReview['comment']);
+            $stmt->bindParam(':doctor_id', $doctorId);
+            $stmt->bindParam(':user_id', $userId);
+            $stmt->bindParam(':reviewText', $newReview['reviewText']);
             $stmt->bindParam(':rating', $newReview['rating']);
 
             // Save the new review
@@ -76,13 +72,18 @@ class ReviewController
                 // Fetch the inserted review ID
                 $newReviewId = $this->conn->lastInsertId();
 
-                // Associate the review with the doctor
-                $this->updateDoctorReviews($doctorId, $newReviewId);
+                // Associate the review with the doctor (if needed)
+                // $this->updateDoctorReviews($doctorId, $newReviewId);
 
                 return json_encode([
                     'success' => true,
                     'message' => 'Review submitted',
                     'data' => $newReview
+                ]);
+            } else {
+                return json_encode([
+                    'success' => false,
+                    'message' => 'Failed to create review'
                 ]);
             }
         } catch (PDOException $e) {
@@ -93,6 +94,8 @@ class ReviewController
             ]);
         }
     }
+
+
 
     // Function to update doctor's reviews
     private function updateDoctorReviews($doctorId, $reviewId)

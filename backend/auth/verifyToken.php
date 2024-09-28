@@ -25,8 +25,8 @@ class TokenMiddleware
         $authToken = str_replace('Bearer ', '', $authHeader);
 
         // Debugging: check what is being extracted
-        echo "Auth Header: " . $authHeader . "\n"; // Debugging line
-        echo "Extracted Token: " . $authToken . "\n"; // Debugging line
+        //echo "Auth Header: " . $authHeader . "\n"; // Debugging line
+        //echo "Extracted Token: " . $authToken . "\n"; // Debugging line
 
         // Check if token exists
         if (!$authToken) {
@@ -43,7 +43,7 @@ class TokenMiddleware
 
 
             // Debugging: ensure token is correctly extracted
-            echo "Token after extraction: " . $token . "\n";
+            //echo "Token after extraction: " . $token . "\n";
 
             // Check if the secret key is available
             if (!isset($_ENV['JWT_SECRET_KEY'])) {
@@ -51,7 +51,7 @@ class TokenMiddleware
             }
 
             // Debugging: Print JWT secret key to ensure it's being loaded
-            echo "JWT Secret Key: " . $_ENV['JWT_SECRET_KEY'] . "\n";
+            //echo "JWT Secret Key: " . $_ENV['JWT_SECRET_KEY'] . "\n";
 
             // Verify the token
             $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET_KEY'], 'HS256'));

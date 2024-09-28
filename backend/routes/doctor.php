@@ -6,9 +6,13 @@ error_reporting(E_ALL);
 
 // Include the necessary files
 require_once __DIR__ . '/../controllers/DoctorController.php';
+require_once __DIR__ . '/../controllers/ReviewController.php';
+require_once __DIR__ . '/../auth/verifyToken.php';
 
-// Initialize the DoctorController
+// Initialize controllers and token middleware
 $doctorController = new DoctorController();
+$reviewController = new ReviewController();
+$tokenMiddleware = new TokenMiddleware();
 
 // Get the current URL path (for routing)
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -17,8 +21,53 @@ echo 'URL: ' . htmlspecialchars($url);
 // Set the content type to JSON
 header('Content-Type: application/json');
 
+// Extract doctor ID from URL if available
+$doctorId = null;
+if (preg_match('/\/doctors\/(\d+)/', $url, $matches)) {
+    $doctorId = $matches[1];
+}
+
 // Handle routes for doctor-related actions
 switch ($url) {
+        // Handle nested review routes for a doctor
+    case preg_match('/\/hospitalWebPage\/backend\/api\/v1\/doctors\/' . $doctorId . '\/reviews/', $url) ? true : false:
+        // Extract the action after /reviews (if any)
+        $action = str_replace('/hospitalWebPage/backend/api/v1/doctors/' . $doctorId . '/reviews', '', $url);
+
+        // Handle review-related actions
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === '') {
+            // Get all reviews for a specific doctor
+            $response = $reviewController->getAllReviews($doctorId);
+            echo $response;
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === '') {
+            // Authenticate token for creating a review
+            $requestHeaders = getallheaders();
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles (only 'patient' can create reviews)
+            $allowedRoles = ['patient'];
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
+            // Get userId from the authenticated token
+            $userId = $authResult['userId'] ?? null; // Make sure the token structure contains 'userId'
+
+            // Get review data from JSON input
+            $reviewData = json_decode(file_get_contents('php://input'), true);
+
+            // Add doctorId and userId to the review data
+            $reviewData['doctorId'] = $doctorId;
+            $reviewData['userId'] = $userId;
+            // Create a new review for the doctor
+            $response = $reviewController->createReview($reviewData, $doctorId, $userId);
+
+            echo $response;
+        } else {
+            http_response_code(405); // Method not allowed
+            echo json_encode(['success' => false, 'message' => 'Invalid request method for reviews']);
+        }
+        break;
+
+        // Other cases for doctor actions (update, delete, get, etc.)
     case '/hospitalWebPage/backend/api/v1/doctors/updateDoctor':
         if ($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') {
             // Get request headers for token verification
@@ -30,7 +79,6 @@ switch ($url) {
             // Restrict access based on roles
             $allowedRoles = ['admin', 'doctor']; // Adjust the roles as per your needs
             $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
-
 
             $id = $_GET['id'] ?? null;
             if ($id) {
@@ -68,7 +116,6 @@ switch ($url) {
             // Restrict access based on roles
             $allowedRoles = ['admin'];
             $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
-
 
             $id = $_GET['id'] ?? null;
 
