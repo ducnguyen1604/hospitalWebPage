@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -217,7 +218,7 @@ const Signup = () => {
           <div className='mt-7'>
             <button 
               type='submit' 
-
+              onClick={submitHandler}
               className={`w-full bg-primaryColor rounded-lg text-white text-[18px] leading-[30px] px-4 py-4  transform transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700 ${
                 passwordError ? 'opacity-50 cursor-not-allowed' : ''
               }`}
