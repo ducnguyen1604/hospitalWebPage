@@ -1,5 +1,5 @@
 import React from 'react'
-import DoctorCard from "./../../components/Doctor/DoctorCard"
+import DoctorCard from "../../components/Doctor/DoctorCard"
 import { doctors } from "./../../assets/data/doctors"
 
 
@@ -27,9 +27,9 @@ const Doctors = () => {
 
     <section>
       <div className='container'>
-        <div className='xl:w-[450px] mx-auto'>
+        <div className='xl:w-[650px] mx-auto'>
           <h2 className='heading text-center'>What our patients say?</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum. Vivamus nisl leo, condimentum ut mauris quis, venenatis feugiat eros. Sed et erat fringilla, feugiat ipsum quis, elementum nunc.</p>
+          <p className='text__para text-center'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum. Vivamus nisl leo, condimentum ut mauris quis, venenatis feugiat eros. Sed et erat fringilla, feugiat ipsum quis, elementum nunc.</p>
         </div>
       </div>
 

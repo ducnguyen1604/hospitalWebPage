@@ -75,7 +75,10 @@ const Header = () => {
                     </div>
                     {/*-- User & Log in -->*/}
                     <div className='flex items-center gap-4'>
-                        <div>
+                        {
+                            
+                            /* When user log in, the user image will appear
+                             <div>
                             <Link to='/'>
                                 <figure>
                                     <img
@@ -85,6 +88,9 @@ const Header = () => {
                                 </figure>
                             </Link>
                         </div>
+                            */
+                        }
+                       
 
                         <Link to='/login'>
                             <button className='bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]

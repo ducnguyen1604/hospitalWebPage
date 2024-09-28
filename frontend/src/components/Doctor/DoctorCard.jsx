@@ -5,7 +5,7 @@ import { BsArrowRight } from 'react-icons/bs'
 
 const DoctorCard = ({ doctor }) => {
 
-    const { name, avgRating, totalRating, specialty, photo, totalPatients, hospital } = doctor
+    const { id, name, avgRating, totalRating, specialty, photo, totalPatients, hospital } = doctor
 
 
 
@@ -36,7 +36,7 @@ const DoctorCard = ({ doctor }) => {
                     <h3 className='text-[16px] leading-7 lg:text-[18px] lg:leading-[30px] font-semibild text-headingColor'>{totalPatients} Patients</h3>
                     <p className='text-[14px] leading-6 font-[400] text-textColor'>At {hospital}</p>
                 </div>
-                <Link to='/doctors' className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[10px] mr-5 mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
+                <Link to={`/doctors/${id}`} className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[10px] mr-5 mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
                 <BsArrowRight className='w-6 h-5 group-hover:text-white' />
             </Link>
             </div>

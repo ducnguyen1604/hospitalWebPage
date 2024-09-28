@@ -1,8 +1,9 @@
 import React from 'react'
+import doctorImg from '../../assets/images/doctor-img02.png'
 
 const DoctorDetails = () => {
   return (
-    <>
+    
      <section>
       <div className='max-w-[1150px] px-5 mx-auto'>
         <div className='grid md:grid-cols-3 gap-[50px]'>
@@ -22,7 +23,7 @@ const DoctorDetails = () => {
         </div>
       </div>
      </section>
-    </>
+    
     
   )
 }

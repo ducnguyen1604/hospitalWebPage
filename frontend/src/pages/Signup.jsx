@@ -70,6 +70,8 @@ const Signup = () => {
 
     try {
       console.log("okela")
+
+      //UNCOMMENT TO PERFORM LOG IN
       /*
       const response = await fetch('/api/signup', { // Replace with your API endpoint
         method: 'POST',
@@ -217,7 +219,7 @@ const Signup = () => {
             <button 
               type='submit' 
 
-              className={`w-full bg-primaryColor rounded-lg text-white text-[18px] leading-[30px] px-4 py-4 ${
+              className={`w-full bg-primaryColor rounded-lg text-white text-[18px] leading-[30px] px-4 py-4  transform transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700 ${
                 passwordError ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               disabled={passwordError !== ''}
