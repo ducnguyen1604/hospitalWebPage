@@ -71,7 +71,6 @@ const Signup = () => {
     try {
       console.log("okela")
 
-      //UNCOMMENT TO PERFORM LOG IN
       /*
       const response = await fetch('/api/signup', { // Replace with your API endpoint
         method: 'POST',
@@ -196,7 +195,7 @@ const Signup = () => {
               name="photo" 
               onChange={handleFileInputChange} 
               id='customfile' 
-              accept='.jpg,.heic,.png' 
+              accept='.jpg,.heic,.png, .jpeg' 
               className='top-0 left-0 w-full h-full hidden' 
             />
             <label 
