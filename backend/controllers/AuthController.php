@@ -11,6 +11,19 @@ class AuthController
         // Load environment variables (if using dotenv for JWT_SECRET)
         $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
         $dotenv->load();
+
+        // Allow CORS
+        header("Access-Control-Allow-Origin: http://localhost:5173/");
+        header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+        // Handle preflight OPTIONS request
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            http_response_code(200);
+            exit();
+        }
+
+
     }
 
     public function register($userData)

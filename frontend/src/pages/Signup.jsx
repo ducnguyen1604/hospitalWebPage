@@ -71,11 +71,11 @@ const Signup = () => {
     try {
       console.log("okela")
 
-      /*
-      const response = await fetch('/api/signup', { // Replace with your API endpoint
+      const response = await fetch('http://localhost:80/hospitalWebPage/backend/api/v1/auth/register', { // Replace with your API endpoint
+        mode: 'no-cors',
         method: 'POST',
-        body: data,
-      });
+        body: data, // Ensure this is the correct data
+  });
 
       if (!response.ok) {
         // Handle errors
@@ -86,7 +86,7 @@ const Signup = () => {
         // Handle successful signup, e.g., redirect to login
         console.log('Signup successful!');
       }
-        */
+
     } catch (error) {
       console.error('Error:', error);
       // Handle network errors
