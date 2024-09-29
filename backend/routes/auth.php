@@ -14,7 +14,7 @@ $authController = new AuthController();
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $url = rtrim($url, '/'); // Remove trailing slashes for consistency
 
-echo 'Parsed URL: ' . htmlspecialchars($url) . '<br>';
+//echo 'Parsed URL: ' . htmlspecialchars($url) . '<br>';
 
 // Define the base path for the routes
 $base_url = '/hospitalWebPage/backend/api/v1/auth';

@@ -54,4 +54,26 @@ class Review
         $stmt->execute();
         return $stmt;
     }
+
+    public function readReviewsForDoctorWithUser($doctor_id)
+    {
+        // Query to join reviews with users to get user details
+        $query = 'SELECT 
+                r.id as review_id, 
+                r.reviewText, 
+                r.rating, 
+                r.created_at, 
+                u.id as user_id, 
+                u.name as user_name, 
+                u.photo as user_photo 
+              FROM ' . $this->table . ' r
+              JOIN users u ON r.user_id = u.id
+              WHERE r.doctor_id = :doctor_id';
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':doctor_id', $doctor_id);
+
+        $stmt->execute();
+        return $stmt;
+    }
 }

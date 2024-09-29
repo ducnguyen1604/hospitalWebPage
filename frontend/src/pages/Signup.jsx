@@ -73,10 +73,9 @@ const Signup = () => {
       console.log("okela");
       console.log(data);
 
-      const response = await fetch('http://localhost:80/hospitalWebPage/backend/api/v1/auth/register', { // Replace with your API endpoint
-        mode: 'no-cors',
+      const response = await fetch('http://localhost:80/hospitalWebPage/backend/api/v1/auth/register', { 
         method: 'POST',
-        body: data, // Ensure this is the correct data
+        body: data,
   });
 
       if (!response.ok) {
@@ -219,7 +218,7 @@ const Signup = () => {
           <div className='mt-7'>
             <button 
               type='submit' 
-              onClick={submitHandler}
+              onSubmit={submitHandler}
               className={`w-full bg-primaryColor rounded-lg text-white text-[18px] leading-[30px] px-4 py-4  transform transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700 ${
                 passwordError ? 'opacity-50 cursor-not-allowed' : ''
               }`}

@@ -1,6 +1,7 @@
 <?php
 // Include the necessary files
 require_once __DIR__ . '../../models/Doctor.php';
+require_once __DIR__ . '../../models/Review.php';
 require_once __DIR__ . '../../config/Database.php';
 
 class DoctorController
@@ -110,6 +111,14 @@ class DoctorController
             $doctor = $this->getDoctorById($id);
             if ($doctor) {
                 unset($doctor['password']);
+                // Fetch reviews for the doctor with user details
+                $reviewModel = new Review($this->conn); // Assuming Review model is already required
+                $stmt = $reviewModel->readReviewsForDoctorWithUser($id);
+                $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Add reviews to doctor data
+                $doctor['reviews'] = $reviews;
+
                 return json_encode([
                     'success' => true,
                     'message' => 'Doctor found',

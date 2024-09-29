@@ -26,7 +26,7 @@ require_once __DIR__ . '/../../config/Database.php';
 // Check the URL path
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $url = rtrim($url, '/'); // Ensure no trailing slashes
-echo "this url is here:" . $url;
+//echo "this url is here:" . $url;
 
 // Route handling for the API
 if (strpos($url, '/hospitalWebPage/backend/api/v1/auth') === 0) {
@@ -44,11 +44,11 @@ if (strpos($url, '/hospitalWebPage/backend/api/v1/auth') === 0) {
 }
 
 //Instantiate the Database class and connect
-$database = new Database();
-$db = $database->connect();
+// $database = new Database();
+// $db = $database->connect();
 
-if ($db) {
-    echo 'Database connection successful';
-} else {
-    echo 'Database connection failed';
-}
+// if ($db) {
+//     echo 'Database connection successful';
+// } else {
+//     echo 'Database connection failed';
+// }
