@@ -29,7 +29,7 @@ switch ($url) {
             // Validate the input data
             if (
                 empty($inputData['email']) || empty($inputData['password']) ||
-                empty($inputData['name']) || empty($inputData['role']) || empty($inputData['phone'])
+                empty($inputData['name']) || empty($inputData['role'])
             ) {
                 http_response_code(400);
                 echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
