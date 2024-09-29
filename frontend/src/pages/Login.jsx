@@ -24,23 +24,19 @@ const Login = () => {
   const submitHandler = async (event) => {
     event.preventDefault();
     setLoading(true);
-    // Final validation before submission
-    if (formData.password !== formData.confirmPassword) {
-      setPasswordError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
+``
     try{
-      const res = await fetch(`${BASE_URL}/auth/login`,{
+      const res = await fetch(`${BASE_URL}/auth/login`,{ //http://localhost/hospitalWebPage/backend/api/v1/auth/login
         method:'post',
         headers:{
           'Content-Type':'application/json'
         },
         body:JSON.stringify(formData)
       });
+      //console.log('Response status:', res.status)
       console.log(formData);
-      const {result} = await res.json();
-      console.log(message);
+      const result = await res.json();
+      console.log('Full response:', result); 
 
       if(!res.ok){
         throw new Error(result.message);
@@ -51,17 +47,16 @@ const Login = () => {
         payload:{
           user:result.data,
           token: result.token,
-          role: result.role,
+          role: result.data.role,
         }
       });
-      console.log(result, "login data");
-
-
+      //console.log(result, "login data");
       setLoading(false);
       toast.success(result.message);
       navigate('/home');
 
     }catch(err){
+      console.error('Error:', err);
       toast.error(err.message);
       setLoading(false);
     }
