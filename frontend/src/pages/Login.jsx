@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../config';
+import {toast} from 'react-toastify';
+import {authContext} from '../context/AuthContext.jsx';
 
 const Login = () => {
 
@@ -10,54 +13,60 @@ const Login = () => {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const[loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const{dispatch} = useContext(authContext)
 
   const handleInputChanges = e => {
     SetFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page reload on form submit
-    setErrorMessage(''); // Clear any previous errors
-    setSuccessMessage(''); // Clear any previous success message
-
-    // Ensure the form fields are filled
-    if (!formData.email || !formData.password) {
-      setErrorMessage('Please fill in all the fields');
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    // Final validation before submission
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordError('Passwords do not match');
+      setLoading(false);
       return;
     }
-
-    try {
-      console.log("okela")
-
-      {
-        /* 
-        // Send the data to the PHP backend
-      const response = await fetch('http://your-backend-url.com/login.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+    try{
+      const res = await fetch(`${BASE_URL}/auth/login`,{
+        method:'post',
+        headers:{
+          'Content-Type':'application/json'
         },
-        body: JSON.stringify(formData)
+        body:JSON.stringify(formData)
       });
+      console.log(formData);
+      const {result} = await res.json();
+      console.log(message);
 
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        // Handle successful login
-        setSuccessMessage('Login successful!');
-        // You can redirect or perform other actions here
-      } else {
-        // Handle login failure
-        setErrorMessage(result.message || 'Invalid credentials, please try again.');
+      if(!res.ok){
+        throw new Error(result.message);
       }
-        
-        */
-       }
-      
 
-    } catch (error) {
-      setErrorMessage('An error occurred. Please try again later.');
+      dispatch({
+        type:'LOGIN_SUCCESS',
+        payload:{
+          user:result.data,
+          token: result.token,
+          role: result.role,
+        }
+      });
+      console.log(result, "login data");
+
+
+      setLoading(false);
+      toast.success(result.message);
+      navigate('/home');
+
+    }catch(err){
+      toast.error(err.message);
+      setLoading(false);
     }
+
+      
   };
 
   return (
@@ -66,7 +75,7 @@ const Login = () => {
         <h3 className='text-headingColor text-[22px] leading-9 font-bold mb-10 sm:pl-5 sm:pt-5'>
           Welcome <span className='text-primaryColor'>Back 🥳</span>
         </h3>
-        <form className="py-4 md:py-0" onSubmit={handleSubmit}>
+        <form className="py-4 md:py-0" onSubmit={submitHandler}>
           <div className='mb-5'>
             <input
               type="email"
