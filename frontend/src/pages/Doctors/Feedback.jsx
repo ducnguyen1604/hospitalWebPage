@@ -42,7 +42,7 @@ const Feedback = () => {
             </div>
             {!showFeedbackForm && (
                 <div className="text-center">
-                    <button className="btn transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700" onClick={() => setShowFeedbackForm(true)}>
+                    <button className="btn" onClick={() => setShowFeedbackForm(true)}>
                         Give Feedback
                     </button>
                 </div>

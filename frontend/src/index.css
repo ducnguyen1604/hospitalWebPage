@@ -14,7 +14,7 @@
     }
 
     .btn{
-        @apply bg-primaryColor py-[15px] px-[35px] rounded-[50px] text-white font-[600] mt-[38px]
+        @apply transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700 bg-primaryColor py-[15px] px-[35px] rounded-[50px] text-white font-[600] mt-[38px]
     }
 
     .heading{
@@ -31,6 +31,14 @@
 
     .hero__section {
         @apply bg-[url('./assets/images/hero-bg.png')] bg-no-repeat  bg-center bg-cover
+    }
+
+    .form__label {
+        @apply text-textColor font-semibold text-[16px] mb-2;
+    }
+
+    .form__input {
+        @apply w-full px-4 py-4 border border-solid border-[#0066ff60] focus:outline-none focus:border-primaryColor text-[15px] leading-7 text-headingColor placeholder:text-textColor cursor-pointer rounded-md
     }
 }
 
