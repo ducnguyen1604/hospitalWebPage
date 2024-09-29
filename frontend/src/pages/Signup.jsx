@@ -73,7 +73,8 @@ const Signup = () => {
       console.log("okela");
       console.log(data);
 
-      const response = await fetch('http://localhost:80/hospitalWebPage/backend/api/v1/auth/register', { 
+      const response = await fetch('http://localhost:80/hospitalWebPage/backend/api/v1/auth/register', { // Replace with your API endpoint
+        mode: 'no-cors',
         method: 'POST',
         body: data,
   });
