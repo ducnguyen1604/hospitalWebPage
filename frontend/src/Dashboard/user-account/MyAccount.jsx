@@ -14,7 +14,7 @@ const MyAccount = () => {
   const [tab, setTab] = useState('bookings')
   const { data: userData, loading, error } = useGetProfile(`${BASE_URL}/users/profile/me`)
 
-  // Userdata o day dang bi undefined, a check lai api
+  // Userdata o day dang bi undefined, a check lai api.no phai tra lai duoc user data from database
   console.log(userData)
 
 
