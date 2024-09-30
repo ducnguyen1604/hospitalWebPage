@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import uploadImageToCloudinary from '../utils/uploadCloudinary';
-import { BASE_URL } from '../../config';
+import { BASE_URL } from '../config';
 import {toast} from 'react-toastify';
 import HashLoader from 'react-spinners/HashLoader';
 
@@ -17,7 +17,7 @@ const Signup = () => {
     password: '',
     confirmPassword: '', // Added confirmPassword
     photo: selectedFile,
-    gender: '',
+    gender: 'male',
     role: 'patient',
   });
 
