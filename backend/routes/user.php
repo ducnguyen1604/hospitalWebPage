@@ -54,6 +54,7 @@ switch ($url) {
             echo json_encode(['success' => false, 'message' => 'Invalid request method']);
         }
         break;
+
     case '/hospitalWebPage/backend/api/v1/users/deleteUser':
         // Handle DELETE request for deleting a user
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
@@ -126,6 +127,50 @@ switch ($url) {
 
             // If the user is authorized, proceed with fetching all users
             $response = $userController->getAllUsers();
+            echo $response;
+        } else {
+            http_response_code(405); // Method not allowed
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+        }
+        break;
+    
+    // Em ms add cai case nay va cai case duoi bang chat gpt. em chua test xem no co chay dc ko
+    
+    case '/hospitalWebPage/backend/api/v1/users/getUserProfile':
+        // Handle GET request for retrieving user profile
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['patient'];
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
+            // Get user profile
+            $response = $userController->getUserProfile($userId, $userType);
+            echo $response;
+        } else {
+            http_response_code(405); // Method not allowed
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+        }
+        break;
+
+    case '/hospitalWebPage/backend/api/v1/appointments/my-appointments':
+        // Handle GET request for retrieving user's appointments
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Restrict access based on roles
+            $allowedRoles = ['patient'];
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
+            // Get user's appointments
+            $response = $userController->getMyAppointments($userId, $userType);
             echo $response;
         } else {
             http_response_code(405); // Method not allowed

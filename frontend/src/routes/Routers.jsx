@@ -6,6 +6,9 @@ import Signup from '../pages/Signup'
 import Contact from '../pages/Contact'
 import Doctors from '../pages/Doctors/Doctors'
 import DoctorDetails from '../pages/Doctors/DoctorDetails'
+import MyAccount from '../Dashboard/user-account/MyAccount'
+import Dashboard from '../Dashboard/doctor-account/Dashboard'
+import ProtectedRoute from './ProtectedRoute'
 import {Routes, Route} from 'react-router-dom'
 
 
@@ -24,6 +27,18 @@ const Routers = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/doctors/:id" element={<DoctorDetails />} />
+        
+        <Route path="/users/profile/me" element={<ProtectedRoute allowedRoles={['patient']}><MyAccount /></ProtectedRoute>}/>
+        <Route path="/doctor/profile/me" element={<ProtectedRoute allowedRoles={['doctor']}><Dashboard /></ProtectedRoute>}/>
+        {
+          /* 
+          Tested path:
+        <Route path="/users/profile/me" element={<MyAccount />}/>
+        <Route path="/doctors/profile/me" element={<Dashboard />}/> 
+         */
+        }
+        
+        
     </Routes>
   )
 }

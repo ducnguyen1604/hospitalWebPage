@@ -1,8 +1,9 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useContext } from 'react'
 import logo from '../../assets/images/logo.png'
-import userImg from '../../assets/images/avatar-icon.png'
+// import userImg from '../../assets/images/avatar-icon.png' // test img
 import { NavLink, Link } from 'react-router-dom'
 import { BiMenu } from 'react-icons/bi'
+import { authContext } from '../../context/AuthContext'
 
 const navLinks = [
     {
@@ -24,8 +25,10 @@ const navLinks = [
 ]
 
 const Header = () => {
-    const headerRef = useRef(null)
-    const [menuOpen, setMenuOpen] = useState(false)
+    const headerRef = useRef(null);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const { user, role, token } = useContext(authContext);
+
 
     // Handle sticky header on scroll
     const handleStickyHeader = () => {
@@ -44,9 +47,9 @@ const Header = () => {
     }, [])
 
     // Toggle menu visibility
-    const toggleMenu = () => { 
+    const toggleMenu = () => {
         setMenuOpen(prev => !prev)
-    } 
+    }
 
     // Close menu when a navigation link is clicked
     const closeMenu = () => {
@@ -66,9 +69,9 @@ const Header = () => {
                         <ul className='menu flex flex-col md:flex-row items-center gap-6 md:gap-12'>
                             {navLinks.map((link, index) => (
                                 <li key={index} onClick={closeMenu}>
-                                    <NavLink 
-                                        to={link.path} 
-                                        className={({ isActive }) => 
+                                    <NavLink
+                                        to={link.path}
+                                        className={({ isActive }) =>
                                             isActive
                                                 ? "text-primaryColor text-lg font-semibold"
                                                 : "text-textColor text-lg font-medium hover:text-primaryColor"
@@ -82,6 +85,31 @@ const Header = () => {
                     </div>
                     {/*-- User & Log in -->*/}
                     <div className='flex items-center gap-4'>
+
+                        {token && user ? (
+                            <div>
+                                <Link
+                                    to={`${role === "doctor" ? "/doctors/profile/me" : "/users/profile/me"}`}
+                                >
+                                    <figure className="w-[35px] h-[35px] rounded-full cursor-pointer">
+                                        <img
+                                            //src={user?.photo}
+                                            className="w-full rounded-full"
+                                            alt=""
+                                        />
+                                    </figure>
+                                    <h2>{user?.name}</h2>
+                                </Link>
+                            </div>
+                        ) : (
+                            <Link to="/login">
+                                <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
+                                    Login
+                                </button>
+                            </Link>
+                        )}
+
+
                         {/* 
                             When the user is logged in, you can conditionally render the user image.
                             Uncomment and modify the following block as needed:
@@ -96,13 +124,14 @@ const Header = () => {
                                     </figure>
                                 </Link>
                             </div>
-                        */}
+                        
 
                         <Link to='/login'>
                             <button className='bg-primaryColor py-2 px-6 text-white font-semibold h-11 flex items-center justify-center rounded-full transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700'>
                                 Login
                             </button>
                         </Link>
+                        */}
 
                         {/* Menu Toggle Button */}
                         <span className='md:hidden' onClick={toggleMenu}>

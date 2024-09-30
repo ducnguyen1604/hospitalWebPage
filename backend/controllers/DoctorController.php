@@ -186,4 +186,48 @@ class DoctorController
             ]);
         }
     }
+
+    // Em ms add cai case nay va cai case duoi bang chat gpt. em chua test xem no co chay dc ko
+
+    // Function to get doctor profile
+    public function getDoctorProfile($id)
+    {
+        try {
+            // Retrieve the doctor by ID
+            $doctor = $this->getDoctorById($id);
+
+            // If doctor is not found, return a 404 response
+            if (!$doctor) {
+                return json_encode([
+                    'success' => false,
+                    'message' => 'Doctor not found'
+                ]);
+            }
+
+            // Remove sensitive information (like password)
+            unset($doctor['password']);
+
+            // Retrieve the doctor's appointments
+            $stmt = $this->conn->prepare("SELECT * FROM appointments WHERE doctor_id = :doctor_id");
+            $stmt->bindParam(':doctor_id', $id);
+            $stmt->execute();
+            $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Return the doctor's profile and appointments
+            return json_encode([
+                'success' => true,
+                'message' => 'Profile information retrieved successfully',
+                'data' => [
+                    'doctor' => $doctor,
+                    'appointments' => $appointments
+                ]
+            ]);
+        } catch (PDOException $e) {
+            // Handle any errors
+            return json_encode([
+                'success' => false,
+                'message' => 'Something went wrong, cannot retrieve profile'
+            ]);
+        }
+    }
 }
