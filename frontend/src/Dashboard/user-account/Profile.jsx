@@ -7,7 +7,7 @@ import HashLoader from 'react-spinners/HashLoader';
 
 
 const Profile = ({ user }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
+  //const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -156,7 +156,7 @@ const Profile = ({ user }) => {
             value={formData.bloodType}
             onChange={handleInputChanges}
             className={`pr-4 w-full px-4 py-4 border-b border-solid ${passwordError ? 'border-red-500' : 'border-[#0066ff60]'} focus:outline-none focus:border-b-primaryColor text-[15px] leading-7 text-headingColor placeholder:text-textColor rounded-md`}
-            required
+            
           />
           {passwordError && (
             <p className='text-red-500 text-sm mt-1'>{passwordError}</p>
@@ -221,7 +221,7 @@ const Profile = ({ user }) => {
         </div>
 
 
-      </form>Ï
+      </form>
     </div>
   )
 }

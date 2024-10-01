@@ -7,6 +7,7 @@ import Profile from './Profile';
 import useGetProfile from '../../hooks/useFetchData';
 import { BASE_URL } from '../../config';
 import Loading from '../../components/Loader/Loading';
+import Error from '../../components/Error/Error';
 
 const MyAccount = () => {
 
@@ -36,16 +37,18 @@ const MyAccount = () => {
             <div className="flex items-center justify-center">
               <figure className="w-[100px] h-[100px] rounded-full border-2 border-solid border-primaryColor">
                 <img
-                  src={userImg}
+                  src={userImg} // placeholder photo
+                  // src={userData.photo}
                   alt=""
                   className="w-full h-full rounded-full"
                 />
               </figure>
             </div>
-
+            
+            {/* PlaceHolder, remove later */}
             <div className="text-center mt-4">
               <h3 className="text-[18px] leading-[30px] text-headingColor font-bold">
-                Luke Nguyen
+                Luke Nguyen 
               </h3>
               <p className="text-textColor text-[15px] leading-6 font-medium">
                 example@gmail.com
@@ -55,6 +58,22 @@ const MyAccount = () => {
                 <span className='ml-2 text-headingColor text-[20px] leading-8'>AB</span>
               </p>
             </div>
+
+             {/* Dung khi nao userData update duoc 
+
+            div className="text-center mt-4">
+              <h3 className="text-[18px] leading-[30px] text-headingColor font-bold">
+                {userData.name}
+              </h3>
+              <p className="text-textColor text-[15px] leading-6 font-medium">
+                {userData.email}
+              </p>
+              <p className="text-textColor text-[15px] leading-6 font-medium">
+                Blood Type: 
+                <span className='ml-2 text-headingColor text-[20px] leading-8'>{userData.bloodType}</span>
+              </p>
+            </div>
+            */}
 
             <div className='mt-[50px] md:mt-[100px]'>
               <button onClick={handleLogout} className='transition-transform duration-100 ease-in-out active:scale-95 w-full sm:items-center bg-[#3e3f42] p-3 text-[15px] leading-7 rounded-md text-white'>Log Out</button>
