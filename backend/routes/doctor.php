@@ -182,27 +182,22 @@ switch ($url) {
             echo json_encode(['success' => false, 'message' => 'Invalid request method']);
         }
         break;
-    
-    // Em ms add cai case nay va cai case duoi bang chat gpt. em chua test xem no co chay dc ko
-    
+
     case '/hospitalWebPage/backend/api/v1/profile/me':
         // Handle GET request for retrieving doctor profile
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // Get request headers for token verification
             $requestHeaders = getallheaders();
-            // Authenticate token
             $authResult = $tokenMiddleware->authenticate($requestHeaders);
-
-            // Restrict access based on roles
             $allowedRoles = ['doctor'];
             $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
             // Assuming you need the doctor ID and possibly a role
-            $doctorId = $authResult['user_id']; // Assuming the token middleware returns user ID
+            $doctorId = $_GET['id'] ?? null;
             $userRole = 'doctor'; // Or another value based on your application logic
 
             // Get doctor profile with required arguments
-            $response = $userController->getDoctorProfile($doctorId, $userRole);
+            $response = $userController->getDoctorProfile($doctorId);
             echo $response;
         } else {
             http_response_code(405); // Method not allowed

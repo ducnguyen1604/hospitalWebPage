@@ -2,6 +2,7 @@
 // Include the necessary files
 require_once __DIR__ . '../../models/Doctor.php';
 require_once __DIR__ . '../../models/Review.php';
+require_once __DIR__ . '../../models/Booking.php';
 require_once __DIR__ . '../../config/Database.php';
 
 class DoctorController
@@ -187,13 +188,10 @@ class DoctorController
         }
     }
 
-    // Em ms add cai case nay va cai case duoi bang chat gpt. em chua test xem no co chay dc ko
-
     // Function to get doctor profile
     public function getDoctorProfile($id)
     {
         try {
-            // Retrieve the doctor by ID
             $doctor = $this->getDoctorById($id);
 
             // If doctor is not found, return a 404 response
@@ -208,7 +206,7 @@ class DoctorController
             unset($doctor['password']);
 
             // Retrieve the doctor's appointments
-            $stmt = $this->conn->prepare("SELECT * FROM appointments WHERE doctor_id = :doctor_id");
+            $stmt = $this->conn->prepare("SELECT * FROM bookings WHERE doctor_id = :doctor_id");
             $stmt->bindParam(':doctor_id', $id);
             $stmt->execute();
             $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);

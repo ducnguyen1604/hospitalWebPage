@@ -15,7 +15,7 @@ $tokenMiddleware = new TokenMiddleware();
 // Get the current URL path (for routing)
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $url = rtrim($url, '/');
-echo 'URL: ' . htmlspecialchars($url);
+//echo 'URL: ' . htmlspecialchars($url);
 // Set the content type to JSON
 header('Content-Type: application/json');
 
@@ -133,45 +133,43 @@ switch ($url) {
             echo json_encode(['success' => false, 'message' => 'Invalid request method']);
         }
         break;
-    
-    // Em ms add cai case nay va cai case duoi bang chat gpt. em chua test xem no co chay dc ko
-    
+
     case '/hospitalWebPage/backend/api/v1/users/getUserProfile':
-        // Handle GET request for retrieving user profile
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // Get request headers for token verification
             $requestHeaders = getallheaders();
-            // Authenticate token
             $authResult = $tokenMiddleware->authenticate($requestHeaders);
-
-            // Restrict access based on roles
             $allowedRoles = ['patient'];
             $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
-
+            $userId = $authResult['userId'] ?? null;
             // Get user profile
-            $response = $userController->getUserProfile($userId, $userType);
+            $response = $userController->getUserProfile($userId);
+            http_response_code(200);
             echo $response;
         } else {
-            http_response_code(405); // Method not allowed
+            http_response_code(405);
             echo json_encode(['success' => false, 'message' => 'Invalid request method']);
         }
         break;
 
-    case '/hospitalWebPage/backend/api/v1/appointments/my-appointments':
-        // Handle GET request for retrieving user's appointments
+    case '/hospitalWebPage/backend/api/v1/users/bookings/getMyAppointments':
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // Get request headers for token verification
             $requestHeaders = getallheaders();
-            // Authenticate token
             $authResult = $tokenMiddleware->authenticate($requestHeaders);
-
-            // Restrict access based on roles
             $allowedRoles = ['patient'];
             $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
-            // Get user's appointments
-            $response = $userController->getMyAppointments($userId, $userType);
-            echo $response;
+            $userId = $authResult['userId'] ?? null;
+            // Check if userId is available
+            if ($userId) {
+                // Get user's appointments
+                $response = $userController->getMyAppointments($userId);
+                echo $response;
+            } else {
+                http_response_code(400); // Bad request
+                echo json_encode(['success' => false, 'message' => 'User ID not found in token']);
+            }
         } else {
             http_response_code(405); // Method not allowed
             echo json_encode(['success' => false, 'message' => 'Invalid request method']);
@@ -179,6 +177,7 @@ switch ($url) {
         break;
 
     default:
+        error_log('Invalid route accessed: ' . $_SERVER['REQUEST_URI'], 0);
         http_response_code(404); // Not found
         echo json_encode(['success' => false, 'message' => 'Not Found']);
         break;

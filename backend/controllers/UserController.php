@@ -161,17 +161,12 @@ class UserController
             ]);
         }
     }
-
-    // Em ms add cai case nay va cai case duoi bang chat gpt. em chua test xem no co chay dc ko
-
     // Function to get user profile by ID
     public function getUserProfile($id)
     {
         try {
-            // Fetch the user data
             $user = $this->getUserById($id);
 
-            // Check if user exists
             if (!$user) {
                 return json_encode([
                     'success' => false,
@@ -198,13 +193,13 @@ class UserController
     }
 
     // Function to get appointments for a user
-    public function getMyAppointments($userId)
+    public function getMyAppointments($id)
     {
         try {
             // Step 1: Retrieve bookings for a specific user
             $query = "SELECT * FROM bookings WHERE user_id = :userId";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':userId', $userId);
+            $stmt->bindParam(':userId', $id);
             $stmt->execute();
             $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -220,12 +215,22 @@ class UserController
                 return $booking['doctor_id'];
             }, $bookings);
 
+
+            if (empty($doctorIds)) {
+                return json_encode([
+                    'success' => true,
+                    'message' => 'No doctors found for the bookings',
+                    'data' => $bookings,
+                    'doctors' => []
+                ]);
+            }
+
             // Step 3: Retrieve doctor details using doctor IDs
             $inQuery = implode(',', array_fill(0, count($doctorIds), '?'));
             $query = "SELECT * FROM doctors WHERE id IN ($inQuery)";
             $stmt = $this->conn->prepare($query);
-            foreach ($doctorIds as $k => $id) {
-                $stmt->bindValue(($k + 1), $id);
+            foreach ($doctorIds as $k => $doctorId) {
+                $stmt->bindValue(($k + 1), $doctorId);
             }
             $stmt->execute();
             $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -233,9 +238,11 @@ class UserController
             if (!$doctors) {
                 return json_encode([
                     'success' => false,
-                    'message' => 'No doctors found for the bookings'
+                    'message' => 'No doctors found for the bookings',
+                    'data' => $bookings
                 ]);
             }
+
 
             // Remove any sensitive information from doctors, such as passwords
             foreach ($doctors as &$doctor) {
@@ -246,7 +253,10 @@ class UserController
             return json_encode([
                 'success' => true,
                 'message' => 'Appointments retrieved successfully',
-                'data' => $doctors
+                'data' => [
+                    'bookings' => $bookings,
+                    'doctors' => $doctors
+                ]
             ]);
         } catch (PDOException $e) {
             // Handle any error
