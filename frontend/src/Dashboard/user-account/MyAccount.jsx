@@ -12,11 +12,10 @@ import Error from '../../components/Error/Error';
 const MyAccount = () => {
 
   const { dispatch } = useContext(authContext)
-  const [tab, setTab] = useState('bookings')
-  const { data: userData, loading, error } = useGetProfile(`${BASE_URL}/users/profile/me`)
+  const [tab, setTab] = useState('settings')
+  const { data: userData, loading, error } = useGetProfile(`${BASE_URL}/users/getUserProfile`)
 
-  // Userdata o day dang bi undefined, a check lai api.no phai tra lai duoc user data from database
-  console.log(userData)
+  // console.log(userData)
 
 
   const handleLogout = () => {
@@ -37,31 +36,13 @@ const MyAccount = () => {
             <div className="flex items-center justify-center">
               <figure className="w-[100px] h-[100px] rounded-full border-2 border-solid border-primaryColor">
                 <img
-                  src={userImg} // placeholder photo
-                  // src={userData.photo}
+                  src={userData.photo}
                   alt=""
                   className="w-full h-full rounded-full"
                 />
               </figure>
             </div>
-            
-            {/* PlaceHolder, remove later */}
             <div className="text-center mt-4">
-              <h3 className="text-[18px] leading-[30px] text-headingColor font-bold">
-                Luke Nguyen 
-              </h3>
-              <p className="text-textColor text-[15px] leading-6 font-medium">
-                example@gmail.com
-              </p>
-              <p className="text-textColor text-[15px] leading-6 font-medium">
-                Blood Type:
-                <span className='ml-2 text-headingColor text-[20px] leading-8'>AB</span>
-              </p>
-            </div>
-
-             {/* Dung khi nao userData update duoc 
-
-            div className="text-center mt-4">
               <h3 className="text-[18px] leading-[30px] text-headingColor font-bold">
                 {userData.name}
               </h3>
@@ -73,7 +54,7 @@ const MyAccount = () => {
                 <span className='ml-2 text-headingColor text-[20px] leading-8'>{userData.bloodType}</span>
               </p>
             </div>
-            */}
+           
 
             <div className='mt-[50px] md:mt-[100px]'>
               <button onClick={handleLogout} className='transition-transform duration-100 ease-in-out active:scale-95 w-full sm:items-center bg-[#3e3f42] p-3 text-[15px] leading-7 rounded-md text-white'>Log Out</button>

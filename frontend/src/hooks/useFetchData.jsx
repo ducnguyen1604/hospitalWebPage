@@ -18,12 +18,24 @@ const useFetchData = url => {
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
         })
-        const result = await res.json()
+        // console.log('Fetch response received:', res);
+        // const errorText = await res.text();
+        // console.log(errorText)
+
+          // Check if the response is ok before parsing
+        if (!res.ok) {
+          // Read the response body as text to capture error details
+          const errorText = await res.text();
+          throw new Error(`Error ${res.status}: ${errorText}`);
+        }
+  //  // Parse response body as JSON once
+  //  console.log('Attempting to parse JSON'); // Log before parsing
+   const result = await res.json();
+  //  console.log('test test test', result);
 
         if (!res.ok) {
           throw new Error(result.message + ':(')
         }
-
         setData(result.data)
         setLoading(false)
       } catch (err) {
@@ -31,11 +43,12 @@ const useFetchData = url => {
         setError(err.message)
       }
     }
-  }, [url])
+    fetchData();
+  }, [url]);
 
   return {
     data, loading, error
-  }
+  };
 
 }
 

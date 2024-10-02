@@ -6,7 +6,14 @@ import DoctorCard from '../../components/Doctor/DoctorCard'
 import Error from '../../components/Error/Error'
 
 const MyBookings = () => {
-  const { data: appointments, loading, error } = useFetchData(`${BASE_URL}/users/appointments/my-appointments`)
+  const { data, loading, error } = useFetchData(`${BASE_URL}/users/bookings/getMyAppointments`)
+  console.log(data)
+  const appointments = data.doctors;
+  // console.log(appointments)
+
+  if (!data || data.length === 0) {
+    return null
+  }
 
   return (
     <div>
