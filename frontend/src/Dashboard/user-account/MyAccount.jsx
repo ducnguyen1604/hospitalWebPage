@@ -83,7 +83,7 @@ const MyAccount = () => {
               tab === 'bookings' && <MyBookings />
             }
             {
-              tab === 'settings' && <Profile userData={userData} />
+              tab === 'settings' && <Profile user={userData} />
             }
 
           </div>

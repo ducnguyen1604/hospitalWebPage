@@ -24,20 +24,20 @@ class UserController
             $query = "UPDATE users SET 
                         email = :email,
                         name = :name,
-                        phone = :phone,
-                        role = :role,
                         gender = :gender,
-                        photo = :photo
+                        photo = :photo,
+                        blood_type = :blood_type
                       WHERE id = :id";
 
             $stmt = $this->conn->prepare($query);
 
             $stmt->bindParam(':email', $userData['email']);
             $stmt->bindParam(':name', $userData['name']);
-            $stmt->bindParam(':phone', $userData['phone']);
-            $stmt->bindParam(':role', $userData['role']);
+            //$stmt->bindParam(':phone', $userData['phone']);
+            //$stmt->bindParam(':role', $userData['role']);
             $stmt->bindParam(':gender', $userData['gender']);
             $stmt->bindParam(':photo', $userData['photo']);
+            $stmt->bindParam(':blood_type', $userData['blood_type']);
             $stmt->bindParam(':id', $id);
 
             if ($stmt->execute()) {

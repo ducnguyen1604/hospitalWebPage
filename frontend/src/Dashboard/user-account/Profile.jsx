@@ -7,35 +7,35 @@ import HashLoader from 'react-spinners/HashLoader';
 
 
 const Profile = ({ user }) => {
-  //const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [previewURL, setPreviewURL] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     photo: null,
     gender: '',
-    bloodType: '',
+    blood_type: '',
   });
 
   const navigate = useNavigate();
+  //console.log('user in useEffect:', user); 
 
   useEffect(() => {
-    console.log('user in useEffect:', user); 
     if (user) {
       setFormData({ 
         name: user.name, 
         email: user.email, 
         photo: user.photo, 
         gender: user.gender, 
-        bloodType: user.bloodType 
+        blood_type: user.blood_type 
       });
     }
   }, [user]);
-  
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-
+  
   const handleInputChanges = (e) => {
     const { name, value } = e.target;
 
@@ -50,8 +50,13 @@ const Profile = ({ user }) => {
         setPasswordError('');
       }
     }
-
-    setFormData({ ...formData, [name]: value });
+    // Update either formData or confirmPassword state
+    if (name === 'confirmPassword') {
+      setConfirmPassword(value);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+    //setFormData({ ...formData, [name]: value });
   };
 
   const handleFileInputChange = async event => {
@@ -60,6 +65,7 @@ const Profile = ({ user }) => {
     const data = await uploadImageToCloudinary(file);
 
 
+    setPreviewURL(data.url);
     setSelectedFile(data.url);
     setFormData({ ...formData, photo: data.url });
 
@@ -69,17 +75,13 @@ const Profile = ({ user }) => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
+    //console.log('Submit Handler Triggered');
     setLoading(true);
-    // Final validation before submission
-    if (formData.password !== formData.confirmPassword) {
-      setPasswordError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
     try {
-      // Co the api ko dung 
-      const res = await fetch(`${BASE_URL}/users/updateUser/${user._id}`, {
-        method: 'put',
+      console.log('Request URL:', `${BASE_URL}/users/updateUser?id=${user.id}`);
+      console.log('Request Body:', formData);
+      const res = await fetch(`${BASE_URL}/users/updateUser?id=${user.id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
@@ -139,11 +141,24 @@ const Profile = ({ user }) => {
           <input
             type="password"
             placeholder='New Password'
-            name='bloodType'
+            name='password'
             value={formData.password}
             onChange={handleInputChanges}
             className='pr-4 w-full px-4 py-4 border-b border-solid border-[#0066ff60] focus:outline-none focus:border-b-primaryColor text-[15px] leading-7 text-headingColor placeholder:text-textColor rounded-md'
           />
+        </div>
+
+         {/* Confirm Password */}
+         <div className='mb-5'>
+          <input
+            type="password"
+            placeholder='Confirm Password'
+            name='confirmPassword'
+            value={confirmPassword}
+            onChange={handleInputChanges}
+            className='pr-4 w-full px-4 py-4 border-b border-solid border-[#0066ff60] focus:outline-none focus:border-b-primaryColor text-[15px] leading-7 text-headingColor placeholder:text-textColor rounded-md'
+          />
+          {passwordError && <p className="text-red-500">{passwordError}</p>}
         </div>
 
         {/* Blood Type */}
@@ -151,15 +166,12 @@ const Profile = ({ user }) => {
           <input
             type="text"
             placeholder='Blood Type'
-            name='confirmPassword'
-            value={formData.bloodType}
+            name='blood_type'
+            value={formData.blood_type}
             onChange={handleInputChanges}
-            className={`pr-4 w-full px-4 py-4 border-b border-solid ${passwordError ? 'border-red-500' : 'border-[#0066ff60]'} focus:outline-none focus:border-b-primaryColor text-[15px] leading-7 text-headingColor placeholder:text-textColor rounded-md`}
+            className={`pr-4 w-full px-4 py-4 border-b border-solid border-[#0066ff60] focus:outline-none focus:border-b-primaryColor text-[15px] leading-7 text-headingColor placeholder:text-textColor rounded-md`}
             
           />
-          {passwordError && (
-            <p className='text-red-500 text-sm mt-1'>{passwordError}</p>
-          )}
         </div>
 
         {/* Role and Gender Selection */}
