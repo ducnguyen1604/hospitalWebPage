@@ -15,7 +15,7 @@ const MyAccount = () => {
   const [tab, setTab] = useState('settings')
   const { data: userData, loading, error } = useGetProfile(`${BASE_URL}/users/getUserProfile`)
 
-  // console.log(userData)
+  //console.log(userData)
 
 
   const handleLogout = () => {
@@ -51,7 +51,7 @@ const MyAccount = () => {
               </p>
               <p className="text-textColor text-[15px] leading-6 font-medium">
                 Blood Type: 
-                <span className='ml-2 text-headingColor text-[20px] leading-8'>{userData.bloodType}</span>
+                <span className='ml-2 text-headingColor text-[20px] leading-8'>{userData.blood_type}</span>
               </p>
             </div>
            

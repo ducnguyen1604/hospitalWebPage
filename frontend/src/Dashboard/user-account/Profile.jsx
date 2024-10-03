@@ -20,8 +20,7 @@ const Profile = ({ user }) => {
   });
 
   const navigate = useNavigate();
-  
-  // Em ko biet tai sao user is not defined mac du em da 
+
   useEffect(() => {
     console.log('user in useEffect:', user); 
     if (user) {
@@ -79,7 +78,7 @@ const Profile = ({ user }) => {
     }
     try {
       // Co the api ko dung 
-      const res = await fetch(`${BASE_URL}/user/${user._id}`, {
+      const res = await fetch(`${BASE_URL}/users/updateUser/${user._id}`, {
         method: 'put',
         headers: {
           'Content-Type': 'application/json',
