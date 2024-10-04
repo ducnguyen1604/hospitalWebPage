@@ -17,7 +17,7 @@ $tokenMiddleware = new TokenMiddleware();
 // Get the current URL path (for routing)
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $url = rtrim($url, '/');
-echo 'URL: ' . htmlspecialchars($url);
+//echo 'URL: ' . htmlspecialchars($url);
 // Set the content type to JSON
 header('Content-Type: application/json');
 
@@ -183,7 +183,7 @@ switch ($url) {
         }
         break;
 
-    case '/hospitalWebPage/backend/api/v1/profile/me':
+    case '/hospitalWebPage/backend/api/v1/doctors/getDoctorProfile':
         // Handle GET request for retrieving doctor profile
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // Get request headers for token verification
@@ -192,12 +192,11 @@ switch ($url) {
             $allowedRoles = ['doctor'];
             $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
-            // Assuming you need the doctor ID and possibly a role
-            $doctorId = $_GET['id'] ?? null;
-            $userRole = 'doctor'; // Or another value based on your application logic
-
+            $doctorId = $authResult['userId'] ?? null;
+            //echo 'doctorId is:' . $doctorId;
             // Get doctor profile with required arguments
-            $response = $userController->getDoctorProfile($doctorId);
+            $response = $doctorController->getDoctorProfile($doctorId);
+            http_response_code(200);
             echo $response;
         } else {
             http_response_code(405); // Method not allowed
