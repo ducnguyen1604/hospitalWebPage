@@ -9,6 +9,7 @@ import Error from '../../components/Error/Error';
 import Tabs from './Tabs';
 import StarIcon from '../../assets/images/Star.png'
 import DoctorAbout from '../../pages/Doctors/DoctorAbout';
+import Profile from './Profile';
 
 
 const Dashboard = ({name, about, qualification, experiences}) => {
@@ -90,7 +91,7 @@ const Dashboard = ({name, about, qualification, experiences}) => {
                   
                 )}
                 {tab === 'appointments' && <div>appointments</div>}
-                {tab === 'settings' && <div>settings</div>}
+                {tab === 'settings' && <Profile />}
               </div>
             </div>
           </div>
