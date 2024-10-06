@@ -10,6 +10,7 @@ import Tabs from './Tabs';
 import StarIcon from '../../assets/images/Star.png'
 import DoctorAbout from '../../pages/Doctors/DoctorAbout';
 import Profile from './Profile';
+import Appointments from './Appointment';
 
 
 const Dashboard = ({name, about, qualification, experiences}) => {
@@ -75,10 +76,10 @@ const Dashboard = ({name, about, qualification, experiences}) => {
                     {doctor.name}
                       </h3>
                       <div className="flex items-center gap-[6px]">
-                      <span className="flex items-center gap-[6px] text-headingColor text-[14px] leading-5 lg:text-[16px] lg:leading-6 font-semibold"><img src={StarIcon} alt="" />4.5</span>
-                      <span className='text-textColor text-[14px] leading-5 lg:text-[16px] lg:leading-6 font-semibold'>(233)</span>
+                      <span className="flex items-center gap-[6px] text-headingColor text-[14px] leading-5 lg:text-[16px] lg:leading-6 font-semibold"><img src={StarIcon} alt="" />{doctor.averageRating}</span>
+                      <span className='text-textColor text-[14px] leading-5 lg:text-[16px] lg:leading-6 font-semibold'>({doctor.totalRating})</span>
                     </div>
-                    <p className='text__para font-[15px] lg:max-w-[400px] leading-6'>Doctor bio</p>
+                    <p className='text__para font-[15px] lg:max-w-[400px] leading-6'>{doctor?.bio}</p>
                     </div>                    
                   </div>
                   <DoctorAbout 
@@ -90,8 +91,8 @@ const Dashboard = ({name, about, qualification, experiences}) => {
                   </div>
                   
                 )}
-                {tab === 'appointments' && <div>appointments</div>}
-                {tab === 'settings' && <Profile />}
+                {tab === 'appointments' && <Appointments />}
+                {tab === 'settings' && <Profile doctorData={data}/>}
               </div>
             </div>
           </div>
