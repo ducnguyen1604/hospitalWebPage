@@ -25,7 +25,7 @@ const Routers = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/doctors" element={<Doctors />} />
+        <Route path="/doctors" element={ <Doctors />} />
         <Route path="/doctors/:id" element={<DoctorDetails />} />
         
         <Route path="/users/profile/me" element={<ProtectedRoute allowedRoles={['patient']}><MyAccount /></ProtectedRoute>}/>

@@ -8,6 +8,7 @@ import useGetProfile from '../../hooks/useFetchData';
 import { BASE_URL } from '../../config';
 import Loading from '../../components/Loader/Loading';
 import Error from '../../components/Error/Error';
+import FloatingChatbot from './FloatingChatbot';
 
 const MyAccount = () => {
 
@@ -93,7 +94,8 @@ const MyAccount = () => {
         )}
         
       </div>
-
+          {/*Floating Chatbot */}
+      <FloatingChatbot />
     </section>
 
   );
