@@ -58,3 +58,4 @@ const Tabs = ({ tab, setTab }) => {
 };
 
 export default Tabs;
+
