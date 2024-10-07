@@ -28,7 +28,8 @@ class DoctorController
                         gender = :gender,
                         photo = :photo,
                         specialization = :specialization,
-                        isApproved = :isApproved
+                        isApproved = :isApproved,
+                        bio = :bio
                       WHERE id = :id";
 
             $stmt = $this->conn->prepare($query);
@@ -40,6 +41,7 @@ class DoctorController
             $stmt->bindParam(':gender', $doctorData['gender']);
             $stmt->bindParam(':photo', $doctorData['photo']);
             $stmt->bindParam(':specialization', $doctorData['specialization']);
+            $stmt->bindParam(':bio', $doctorData['bio']);
             $stmt->bindParam(':isApproved', $doctorData['isApproved']);
             $stmt->bindParam(':id', $id);
 

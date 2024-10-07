@@ -4,13 +4,13 @@ import { BASE_URL } from '../../config'
 import Loading from '../../components/Loader/Loading'
 import DoctorCard from '../../components/Doctor/DoctorCard'
 import Error from '../../components/Error/Error'
+import { BiUnderline } from 'react-icons/bi'
 
 const MyBookings = () => {
   const { data, loading, error } = useFetchData(`${BASE_URL}/users/bookings/getMyAppointments`)
   console.log(data)
-  const appointments = data.doctors;
-  // console.log(appointments)
-
+  const appointments = data?.doctors || [];
+  //console.log(appointments)
   if (!data || data.length === 0) {
     return null
   }

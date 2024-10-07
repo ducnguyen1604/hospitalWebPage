@@ -34,6 +34,7 @@ class AuthController
         $photo = $userData['photo'];
         $gender = $userData['gender'];
         $specialization = $userData['specialization'] ?? null; //for doctor
+        $bio = $userData['bio'] ?? null; //for doctor
         $phone = $userData['phone'] ?? null; // For doctor
 
         // Get the database connection
@@ -66,8 +67,8 @@ class AuthController
             if ($role == 'patient') {
                 $insertQuery = "INSERT INTO users (email, password, name, role, photo, gender) VALUES (:email, :password, :name, :role, :photo, :gender)";
             } elseif ($role == 'doctor') {
-                $insertQuery = "INSERT INTO doctors (email, password, name, specialization, phone, photo, gender, role) 
-                                VALUES (:email, :password, :name, :specialization, :phone, :photo, :gender, :role)";
+                $insertQuery = "INSERT INTO doctors (email, password, name, specialization, bio, phone, photo, gender, role) 
+                                VALUES (:email, :password, :name, :specialization,:bio, :phone, :photo, :gender, :role)";
             }
 
             // Prepare and execute the insert query
@@ -82,6 +83,7 @@ class AuthController
             // For doctors, bind the specialization
             if ($role == 'doctor') {
                 $insertStmt->bindParam(':specialization', $specialization);
+                $insertStmt->bindParam(':bio', $bio);
                 $insertStmt->bindParam(':phone', $phone);
             }
 
