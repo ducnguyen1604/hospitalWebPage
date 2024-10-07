@@ -27,6 +27,8 @@ const Dashboard = ({name, about, qualification, experiences}) => {
   if (!data || !doctor) return null
 
   console.log("Doctor data:",data)
+  
+
   return (
     <section>
       <div className="max-w-[1170px] px-5 mx-auto">
@@ -91,7 +93,7 @@ const Dashboard = ({name, about, qualification, experiences}) => {
                   </div>
                   
                 )}
-                {tab === 'appointments' && <Appointment />}
+                {tab === 'appointments' && <Appointment appointments={data?.appointments}/>}
                 {tab === 'settings' && <Profile doctorData={data}/>}
               </div>
             </div>

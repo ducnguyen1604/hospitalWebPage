@@ -13,8 +13,8 @@ const Profile = ({ doctorData }) => {
     gender: '',
     specialization: '',
     ticketPrice: 0,
-    qualifications: [],
-    experiences: [],
+    //qualifications: [],
+    //experiences: [],
     timeSlots: [],
     about: '',
     photo: null,
@@ -32,8 +32,8 @@ const Profile = ({ doctorData }) => {
         gender: doctorData.doctor?.gender || '',
         specialization: doctorData.doctor?.specialization || '',
         ticketPrice: doctorData.appointments?.[0]?.ticket_price || 0,
-        qualifications: doctorData.doctor?.qualifications || [],
-        experiences: doctorData.doctor?.experiences || [],
+        //qualifications: doctorData.doctor?.qualifications || [],
+        //experiences: doctorData.doctor?.experiences || [],
         timeSlots: doctorData.doctor?.timeSlots || [],
         about: doctorData.doctor?.about || '',
         photo: doctorData.doctor?.photo || null,
@@ -56,25 +56,7 @@ const Profile = ({ doctorData }) => {
     }));
   };
 
-  const addQualification = (e) => {
-    e.preventDefault();
-    addItems('qualifications', {
-      startingDate: '',
-      endingDate: '',
-      degree: '',
-      university: '',
-    });
-  };
-
-  const addExperience = (e) => {
-    e.preventDefault();
-    addItems('experiences', {
-      startingDate: '',
-      endingDate: '',
-      position: '',
-      hospital: '',
-    });
-  };
+  
 
   const addTimeSlot = (e) => {
     e.preventDefault();
@@ -98,13 +80,6 @@ const Profile = ({ doctorData }) => {
     });
   };
 
-  const handleQualificationChange = (event, index) => {
-    handleReusableInputChangeFunc('qualifications', index, event);
-  };
-
-  const handleExperienceChange = (event, index) => {
-    handleReusableInputChangeFunc('experiences', index, event);
-  };
 
   const handleTimeSlotChange = (event, index) => {
     handleReusableInputChangeFunc('timeSlots', index, event);
@@ -127,16 +102,6 @@ const Profile = ({ doctorData }) => {
       ...prevFormData,
       [key]: prevFormData[key].filter((_, i) => i !== index),
     }));
-  };
-
-  const deleteQualification = (e, index) => {
-    e.preventDefault();
-    deleteItem('qualifications', index);
-  };
-
-  const deleteExperience = (e, index) => {
-    e.preventDefault();
-    deleteItem('experiences', index);
   };
 
   const deleteTimeSlot = (e, index) => {
@@ -170,6 +135,45 @@ const Profile = ({ doctorData }) => {
       toast.error(err.message);
     }
   };
+ 
+  // Optional code for adding qualification and Experience
+  // const addQualification = (e) => {
+  //   e.preventDefault();
+  //   addItems('qualifications', {
+  //     startingDate: '',
+  //     endingDate: '',
+  //     degree: '',
+  //     university: '',
+  //   });
+  // };
+
+  // const addExperience = (e) => {
+  //   e.preventDefault();
+  //   addItems('experiences', {
+  //     startingDate: '',
+  //     endingDate: '',
+  //     position: '',
+  //     hospital: '',
+  //   });
+  // };
+
+   //const deleteQualification = (e, index) => {
+  //  e.preventDefault();
+  //  deleteItem('qualifications', index);
+  //};
+
+  // const deleteExperience = (e, index) => {
+  //   e.preventDefault();
+  //   deleteItem('experiences', index);
+  // };
+
+  // const handleQualificationChange = (event, index) => {
+  //   handleReusableInputChangeFunc('qualifications', index, event);
+  // };
+
+  // const handleExperienceChange = (event, index) => {
+  //   handleReusableInputChangeFunc('experiences', index, event);
+  // };
 
   return (
     <div>
@@ -277,8 +281,9 @@ const Profile = ({ doctorData }) => {
             </div>
           </div>
         </div>
+        
 
-        {/* Qualifications */}
+        {/* Qualifications 
         <div className="mb-5">
           <p className="form__label">Qualifications</p>
           {formData.qualifications.map((item, index) => (
@@ -339,8 +344,9 @@ const Profile = ({ doctorData }) => {
             Add Qualification
           </button>
         </div>
+        */}
 
-        {/* Experiences */}
+        {/* Experiences 
         <div className="mb-5">
           <p className="form__label">Experiences</p>
           {formData.experiences.map((item, index) => (
@@ -401,6 +407,7 @@ const Profile = ({ doctorData }) => {
             Add Experience
           </button>
         </div>
+        */}
 
         {/* Time Slot */}
         <div className="mb-5">
