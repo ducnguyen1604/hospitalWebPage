@@ -30,8 +30,8 @@ const Tabs = ({ tab, setTab }) => {
                     Overview
                 </button>
                 <button
-                    onClick={() => setTab('appointment')}
-                    className={` ${tab === "appointment"
+                    onClick={() => setTab('appointments')}
+                    className={` ${tab === "appointments"
                         ? "bg-indigo-100 text-primaryColor"
                         : "bg-transparent text-headingColor"
                         } w-full btn mt-0 rounded-md `}
@@ -58,3 +58,4 @@ const Tabs = ({ tab, setTab }) => {
 };
 
 export default Tabs;
+

@@ -10,7 +10,7 @@ import Tabs from './Tabs';
 import StarIcon from '../../assets/images/Star.png'
 import DoctorAbout from '../../pages/Doctors/DoctorAbout';
 import Profile from './Profile';
-import Appointments from './Appointment';
+import Appointment from './Appointment';
 
 
 const Dashboard = ({name, about, qualification, experiences}) => {
@@ -91,7 +91,7 @@ const Dashboard = ({name, about, qualification, experiences}) => {
                   </div>
                   
                 )}
-                {tab === 'appointments' && <Appointments />}
+                {tab === 'appointments' && <Appointment />}
                 {tab === 'settings' && <Profile doctorData={data}/>}
               </div>
             </div>
