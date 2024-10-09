@@ -29,7 +29,8 @@ class DoctorController
                         photo = :photo,
                         specialization = :specialization,
                         isApproved = :isApproved,
-                        bio = :bio
+                        bio = :bio,
+                        ticket_price = :ticket_price
                       WHERE id = :id";
 
             $stmt = $this->conn->prepare($query);
@@ -42,6 +43,7 @@ class DoctorController
             $stmt->bindParam(':photo', $doctorData['photo']);
             $stmt->bindParam(':specialization', $doctorData['specialization']);
             $stmt->bindParam(':bio', $doctorData['bio']);
+            $stmt->bindParam(':ticket_price', $doctorData['ticket_price']);
             $stmt->bindParam(':isApproved', $doctorData['isApproved']);
             $stmt->bindParam(':id', $id);
 

@@ -84,6 +84,7 @@ class AuthController
             if ($role == 'doctor') {
                 $insertStmt->bindParam(':specialization', $specialization);
                 $insertStmt->bindParam(':bio', $bio);
+                $insertStmt->bindParam(':ticket_price', $bio);
                 $insertStmt->bindParam(':phone', $phone);
             }
 

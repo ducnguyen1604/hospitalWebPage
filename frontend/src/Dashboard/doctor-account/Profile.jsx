@@ -1,46 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { AiOutlineDelete } from 'react-icons/ai';
-import uploadImageToCloudinary from '../../utils/uploadCloudinary';
-import { BASE_URL, token } from '../../config';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import { AiOutlineDelete } from "react-icons/ai";
+import uploadImageToCloudinary from "../../utils/uploadCloudinary";
+import { BASE_URL, token } from "../../config";
+import { toast } from "react-toastify";
 
-const Profile = ({ doctorData }) => {
+const Profile = ({ doctorData, onChangeDoctorDetails }) => {
+  console.log(doctorData);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    bio: '',
-    gender: '',
-    specialization: '',
+    name: "",
+    email: "",
+    phone: "",
+    bio: "",
+    gender: "",
+    specialization: "",
     ticketPrice: 0,
     //qualifications: [],
     //experiences: [],
-    timeSlots: [],
-    about: '',
+    //timeSlots: [],
+    //about: "",
     photo: null,
-    password: '',
+    password: "",
   });
-  
+
   useEffect(() => {
     if (doctorData) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        name: doctorData.doctor?.name || '',
-        email: doctorData.doctor?.email || '',
-        phone: doctorData.doctor?.phone || '',
-        bio: doctorData.doctor?.bio || '',
-        gender: doctorData.doctor?.gender || '',
-        specialization: doctorData.doctor?.specialization || '',
-        ticketPrice: doctorData.appointments?.[0]?.ticket_price || 0,
+        name: doctorData?.name || "",
+        email: doctorData?.email || "",
+        phone: doctorData?.phone || "",
+        bio: doctorData?.bio || "",
+        gender: doctorData?.gender || "",
+        specialization: doctorData?.specialization || "",
+        ticketPrice: doctorData?.ticket_price || 0,
         //qualifications: doctorData.doctor?.qualifications || [],
         //experiences: doctorData.doctor?.experiences || [],
-        timeSlots: doctorData.doctor?.timeSlots || [],
-        about: doctorData.doctor?.about || '',
-        photo: doctorData.doctor?.photo || null,
+        //timeSlots: doctorData.doctor?.timeSlots || [],
+        //about: doctorData.doctor?.about || "",
+        photo: doctorData?.photo || null,
       }));
     }
   }, [doctorData]);
-  
 
   // Handle input change for basic fields
   const handleInputChange = (e) => {
@@ -56,14 +56,12 @@ const Profile = ({ doctorData }) => {
     }));
   };
 
-  
-
   const addTimeSlot = (e) => {
     e.preventDefault();
-    addItems('timeSlots', {
-      day: '',
-      startingTime: '',
-      endingTime: '',
+    addItems("timeSlots", {
+      day: "",
+      startingTime: "",
+      endingTime: "",
     });
   };
 
@@ -80,9 +78,8 @@ const Profile = ({ doctorData }) => {
     });
   };
 
-
   const handleTimeSlotChange = (event, index) => {
-    handleReusableInputChangeFunc('timeSlots', index, event);
+    handleReusableInputChangeFunc("timeSlots", index, event);
   };
 
   // Handle file input change
@@ -106,18 +103,19 @@ const Profile = ({ doctorData }) => {
 
   const deleteTimeSlot = (e, index) => {
     e.preventDefault();
-    deleteItem('timeSlots', index);
+    deleteItem("timeSlots", index);
   };
 
+  //console.log(doctorData.id);
   const updateProfileHandler = async (e) => {
     e.preventDefault();
     try {
       const res = await fetch(
         `${BASE_URL}/doctors/updateDoctor?id=${doctorData.id}`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'content-type': 'application/json',
+            "content-type": "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
@@ -129,13 +127,13 @@ const Profile = ({ doctorData }) => {
       if (!res.ok) {
         throw Error(result.message);
       }
-
+      onChangeDoctorDetails(formData);
       toast.success(result.message);
     } catch (err) {
       toast.error(err.message);
     }
   };
- 
+
   // Optional code for adding qualification and Experience
   // const addQualification = (e) => {
   //   e.preventDefault();
@@ -157,7 +155,7 @@ const Profile = ({ doctorData }) => {
   //   });
   // };
 
-   //const deleteQualification = (e, index) => {
+  //const deleteQualification = (e, index) => {
   //  e.preventDefault();
   //  deleteItem('qualifications', index);
   //};
@@ -222,25 +220,11 @@ const Profile = ({ doctorData }) => {
           />
         </div>
 
-        {/* Biography */}
-        <div className="mb-5">
-          <p className="form__label">Biography</p>
-          <input
-            type="text"
-            name="bio"
-            value={formData.bio}
-            onChange={handleInputChange}
-            placeholder="Bio"
-            className="form__input"
-            maxLength={1000}
-          />
-        </div>
-
         {/* Gender, Specialization, Ticket Price */}
         <div className="mb-5">
           <div className="grid grid-cols-3 gap-5 mb-[30px]">
             <div>
-              <p className="form__label">Gender</p>
+              <label className="form__label">Gender</label>
               <select
                 name="gender"
                 value={formData.gender}
@@ -254,34 +238,32 @@ const Profile = ({ doctorData }) => {
             </div>
 
             <div>
-              <p className="form__label">Specialization</p>
-              <select
+              <label className="form__label" htmlFor="specialization">
+                Specialization
+              </label>
+              <input
+                type="text"
                 name="specialization"
                 value={formData.specialization}
                 onChange={handleInputChange}
                 className="form__input py-3.5"
-              >
-                <option value="">Select</option>
-                <option value="surgeon">Surgeon</option>
-                <option value="neurologist">Neurologist</option>
-                <option value="dermatologist">Dermatologist</option>
-              </select>
+                placeholder="Enter your specialization"
+              />
             </div>
 
             <div>
-              <p className="form__label">Ticket Price</p>
+              <label className="form__label">Ticket Price</label>
               <input
                 type="number"
                 placeholder="100"
                 name="ticketPrice"
                 value={formData.ticketPrice}
-                className="form__input"
+                className="form__input py-3.5"
                 onChange={handleInputChange}
               />
             </div>
           </div>
         </div>
-        
 
         {/* Qualifications 
         <div className="mb-5">
@@ -410,7 +392,7 @@ const Profile = ({ doctorData }) => {
         */}
 
         {/* Time Slot */}
-        <div className="mb-5">
+        {/* <div className="mb-5">
           <p className="form__label">Time Slot</p>
           {formData.timeSlots.map((item, index) => (
             <div key={index}>
@@ -467,25 +449,28 @@ const Profile = ({ doctorData }) => {
           <button onClick={addTimeSlot} className="btn mt-0">
             Add Time Slot
           </button>
-        </div>
+        </div> */}
 
-        {/* About & Photo Upload */}
+        {/* Biography & Photo Upload */}
         <div className="mb-5">
-          <p className="form__label">About</p>
+          <p className="form__label">Biography</p>
           <textarea
-            name="about"
+            name="bio"
             rows={5}
-            value={formData.about}
-            placeholder="About You"
+            value={formData.bio}
+            placeholder="Bio"
             onChange={handleInputChange}
             className="form__input"
           ></textarea>
         </div>
-
         <div className="mb-5 flex items-center gap-3">
           {formData.photo && (
             <figure className="w-[60px] h-[60px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center">
-              <img src={formData.photo} alt="" className="w-full rounded-full" />
+              <img
+                src={formData.photo}
+                alt=""
+                className="w-full rounded-full"
+              />
             </figure>
           )}
           <div className="relative w-[130px] h-[50px]">

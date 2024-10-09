@@ -11,8 +11,10 @@ class Doctor
     public $photo;
     public $gender;
     public $blood_type;
+    public $bio;
     public $is_available;
     public $isApproved;
+    public $ticket_price;
 
     public function __construct($db)
     {
@@ -34,8 +36,10 @@ class Doctor
         $stmt->bindParam(':photo', $this->photo);
         $stmt->bindParam(':gender', $this->gender);
         $stmt->bindParam(':blood_type', $this->blood_type);
+        $stmt->bindParam(':bio', $this->bio);
         $stmt->bindParam(':is_available', $this->is_available, PDO::PARAM_BOOL);
         $stmt->bindParam(':isApproved', $this->isApproved);
+        $stmt->bindParam(':ticket_price', $this->isApproved);
 
         // Execute query
         if ($stmt->execute()) {
