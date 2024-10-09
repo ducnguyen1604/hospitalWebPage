@@ -37,6 +37,8 @@ if (strpos($url, '/hospitalWebPage/backend/api/v1/auth') === 0) {
     require_once __DIR__ . '/../../routes/doctor.php';
 } elseif (strpos($url, '/hospitalWebPage/backend/api/v1/reviews') === 0) {
     require_once __DIR__ . '/../../routes/review.php';
+} elseif (strpos($url, '/hospitalWebPage/backend/api/v1/bookings') === 0) {
+    require_once __DIR__ . '/../../routes/booking.php';
 } else {
     // If no route matches, return a 404 response
     http_response_code(404);

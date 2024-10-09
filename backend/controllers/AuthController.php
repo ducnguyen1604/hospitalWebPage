@@ -67,8 +67,8 @@ class AuthController
             if ($role == 'patient') {
                 $insertQuery = "INSERT INTO users (email, password, name, role, photo, gender) VALUES (:email, :password, :name, :role, :photo, :gender)";
             } elseif ($role == 'doctor') {
-                $insertQuery = "INSERT INTO doctors (email, password, name, specialization, bio, phone, photo, gender, role) 
-                                VALUES (:email, :password, :name, :specialization,:bio, :phone, :photo, :gender, :role)";
+                $insertQuery = "INSERT INTO doctors (email, password, name, specialization, bio, ticket_price, phone, photo, gender, role) 
+                                VALUES (:email, :password, :name, :specialization,:bio,:ticket_price, :phone, :photo, :gender, :role)";
             }
 
             // Prepare and execute the insert query

@@ -3,6 +3,8 @@ import { AiOutlineDelete } from "react-icons/ai";
 import uploadImageToCloudinary from "../../utils/uploadCloudinary";
 import { BASE_URL, token } from "../../config";
 import { toast } from "react-toastify";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const TimePosting = ({ doctorData }) => {
   const [formData, setFormData] = useState({
@@ -13,8 +15,6 @@ const TimePosting = ({ doctorData }) => {
     gender: "",
     specialization: "",
     ticketPrice: 0,
-    //qualifications: [],
-    //experiences: [],
     timeSlots: [],
     about: "",
     photo: null,
@@ -36,7 +36,16 @@ const TimePosting = ({ doctorData }) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
-  // Add a new item to qualifications or experiences
+  // Add a new time slot
+  const addTimeSlot = (e) => {
+    e.preventDefault();
+    addItems("timeSlots", {
+      date: new Date(),
+      startingTime: "",
+      endingTime: "",
+    });
+  };
+
   const addItems = (key, items) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -44,30 +53,28 @@ const TimePosting = ({ doctorData }) => {
     }));
   };
 
-  const addTimeSlot = (e) => {
-    e.preventDefault();
-    addItems("timeSlots", {
-      day: "",
-      startingTime: "",
-      endingTime: "",
-    });
-  };
-
-  // Handle change for qualifications, experiences, and timeSlots
-  const handleReusableInputChangeFunc = (key, index, event) => {
+  // Handle date and time changes
+  const handleTimeSlotChange = (key, index, event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => {
-      const updatedItems = [...prevFormData[key]];
+      const updatedItems = [...prevFormData.timeSlots];
       updatedItems[index][name] = value;
       return {
         ...prevFormData,
-        [key]: updatedItems,
+        timeSlots: updatedItems,
       };
     });
   };
 
-  const handleTimeSlotChange = (event, index) => {
-    handleReusableInputChangeFunc("timeSlots", index, event);
+  const handleDateChange = (date, index) => {
+    setFormData((prevFormData) => {
+      const updatedItems = [...prevFormData.timeSlots];
+      updatedItems[index].date = date;
+      return {
+        ...prevFormData,
+        timeSlots: updatedItems,
+      };
+    });
   };
 
   // Handle file input change
@@ -94,28 +101,29 @@ const TimePosting = ({ doctorData }) => {
     deleteItem("timeSlots", index);
   };
 
-  const updateProfileHandler = async (e) => {
+  // Function to submit the time slots to the backend
+  const submitTimeSlots = async (e) => {
     e.preventDefault();
     try {
       const res = await fetch(
-        `${BASE_URL}/doctors/updateDoctor?id=${doctorData.id}`,
+        `${BASE_URL}/doctors/${doctorData.id}/timeSlots`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
-            "content-type": "application/json",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({ timeSlots: formData.timeSlots }),
         }
       );
 
       const result = await res.json();
 
       if (!res.ok) {
-        throw Error(result.message);
+        throw new Error(result.message);
       }
 
-      toast.success(result.message);
+      toast.success("Time slots posted successfully!");
     } catch (err) {
       toast.error(err.message);
     }
@@ -134,22 +142,13 @@ const TimePosting = ({ doctorData }) => {
             <div key={index}>
               <div className="grid grid-cols-2 md:grid-cols-4 mb-[25px] gap-5">
                 <div>
-                  <p className="form__label">Day</p>
-                  <select
-                    name="day"
-                    value={item.day}
+                  <p className="form__label">Date</p>
+                  <DatePicker
+                    selected={item.date}
+                    onChange={(date) => handleDateChange(date, index)}
                     className="form__input py-3.5"
-                    onChange={(e) => handleTimeSlotChange(e, index)}
-                  >
-                    <option value="">Select</option>
-                    <option value="monday">Monday</option>
-                    <option value="tuesday">Tuesday</option>
-                    <option value="wednesday">Wednesday</option>
-                    <option value="thursday">Thursday</option>
-                    <option value="friday">Friday</option>
-                    <option value="saturday">Saturday</option>
-                    <option value="sunday">Sunday</option>
-                  </select>
+                    dateFormat="yyyy/MM/dd"
+                  />
                 </div>
                 <div>
                   <p className="form__label">Starting Time</p>
@@ -158,7 +157,9 @@ const TimePosting = ({ doctorData }) => {
                     name="startingTime"
                     value={item.startingTime}
                     className="form__input"
-                    onChange={(e) => handleTimeSlotChange(e, index)}
+                    onChange={(e) =>
+                      handleTimeSlotChange("timeSlots", index, e)
+                    }
                   />
                 </div>
                 <div>
@@ -168,7 +169,9 @@ const TimePosting = ({ doctorData }) => {
                     name="endingTime"
                     value={item.endingTime}
                     className="form__input"
-                    onChange={(e) => handleTimeSlotChange(e, index)}
+                    onChange={(e) =>
+                      handleTimeSlotChange("timeSlots", index, e)
+                    }
                   />
                 </div>
                 <div className="flex items-center">
@@ -185,7 +188,9 @@ const TimePosting = ({ doctorData }) => {
           <button onClick={addTimeSlot} className="btn mt-0">
             Add Time Slot
           </button>
-          <button className="btn mt-0 ml-10">Posting Available Time</button>
+          <button onClick={submitTimeSlots} className="btn mt-0 ml-10">
+            Posting Available Time
+          </button>
         </div>
       </form>
     </div>

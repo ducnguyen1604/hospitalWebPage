@@ -26,6 +26,12 @@ const Dashboard = ({ name, about, qualification, experiences }) => {
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
   };
+  // Function to generate random rating
+  const getRandomRating = () => {
+    return (Math.random() * (5 - 3) + 3).toFixed(1);
+  };
+
+  const rating = getRandomRating();
 
   const doctor = data.doctor;
 
@@ -86,10 +92,11 @@ const Dashboard = ({ name, about, qualification, experiences }) => {
                         <div className="flex items-center gap-[6px]">
                           <span className="flex items-center gap-[6px] text-headingColor text-[14px] leading-5 lg:text-[16px] lg:leading-6 font-semibold">
                             <img src={StarIcon} alt="" />
-                            {doctor.averageRating}
+                            {/* {doctor.averageRating} */}
+                            {rating}
                           </span>
                           <span className="text-textColor text-[14px] leading-5 lg:text-[16px] lg:leading-6 font-semibold">
-                            ({doctor.totalRating})
+                            {/* ({doctor.totalRating}) */}
                           </span>
                         </div>
                         <p className="text__para font-[15px] lg:max-w-[400px] leading-6">
