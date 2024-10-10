@@ -54,7 +54,7 @@ const TimePosting = ({ doctorData }) => {
   };
 
   // Handle date and time changes
-  const handleTimeSlotChange = (key, index, event) => {
+  const handleTimeSlotChange = (index, event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => {
       const updatedItems = [...prevFormData.timeSlots];
@@ -101,23 +101,34 @@ const TimePosting = ({ doctorData }) => {
     deleteItem("timeSlots", index);
   };
 
-  // Function to submit the time slots to the backend
   const submitTimeSlots = async (e) => {
     e.preventDefault();
+
+    if (!doctorData?.doctor?.id) {
+      toast.error("Doctor data is not loaded. Please try again.");
+      return;
+    }
+
     try {
+      const timeSlotsData = formData.timeSlots.map((slot) => ({
+        user_id: 1, // Replace this with dynamic user_id if needed
+        ticket_price: formData.ticketPrice || "100.00",
+        date: slot.date.toISOString().split("T")[0], // Ensure date is in correct format
+        startingTime: slot.startingTime,
+        endingTime: slot.endingTime,
+      }));
+
       const res = await fetch(
-        `${BASE_URL}/doctors/${doctorData.id}/timeSlots`,
+        `${BASE_URL}/bookings/doctors/${doctorData.doctor.id}/timeSlots`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ timeSlots: formData.timeSlots }),
+          body: JSON.stringify(timeSlotsData),
         }
       );
-
-      const result = await res.json();
 
       if (!res.ok) {
         throw new Error(result.message);
@@ -125,9 +136,11 @@ const TimePosting = ({ doctorData }) => {
 
       toast.success("Time slots posted successfully!");
     } catch (err) {
+      console.error("Error in submission: ", err);
       toast.error(err.message);
     }
   };
+
 
   return (
     <div>
@@ -158,7 +171,7 @@ const TimePosting = ({ doctorData }) => {
                     value={item.startingTime}
                     className="form__input"
                     onChange={(e) =>
-                      handleTimeSlotChange("timeSlots", index, e)
+                      handleTimeSlotChange(index, e)
                     }
                   />
                 </div>
@@ -170,7 +183,7 @@ const TimePosting = ({ doctorData }) => {
                     value={item.endingTime}
                     className="form__input"
                     onChange={(e) =>
-                      handleTimeSlotChange("timeSlots", index, e)
+                      handleTimeSlotChange(index, e)
                     }
                   />
                 </div>
@@ -189,7 +202,7 @@ const TimePosting = ({ doctorData }) => {
             Add Time Slot
           </button>
           <button onClick={submitTimeSlots} className="btn mt-0 ml-10">
-            Posting Available Time
+            Post Available Time
           </button>
         </div>
       </form>
@@ -198,3 +211,4 @@ const TimePosting = ({ doctorData }) => {
 };
 
 export default TimePosting;
+

@@ -34,12 +34,14 @@ class BookingController
                   VALUES (:doctor_id, :user_id, :ticket_price, :appointment_date, :start_time, :end_time, :status, :is_paid)";
 
             $stmt = $this->conn->prepare($query);
+            $successMessages = [];
+            $failedMessages = [];
 
             // Loop through each time slot and insert it
             foreach ($timeSlots as $slot) {
                 // Bind parameters
                 $stmt->bindParam(':doctor_id', $doctorId);
-                $stmt->bindParam(':user_id', $slot['user_id']); // Use the user_id from the slot
+                $stmt->bindParam(':user_id', $slot['user_id']);
                 $stmt->bindParam(':ticket_price', $slot['ticket_price']);
                 $stmt->bindParam(':appointment_date', $slot['date']);
                 $stmt->bindParam(':start_time', $slot['startingTime']);
@@ -49,15 +51,18 @@ class BookingController
 
                 // Execute the query for each time slot
                 if ($stmt->execute()) {
-                    echo "Time slot for " . $slot['date'] . " successfully added.\n";
+                    $successMessages[] = "Time slot for " . $slot['date'] . " successfully added.";
                 } else {
-                    echo "Failed to add time slot for " . $slot['date'] . ".\n";
+                    $failedMessages[] = "Failed to add time slot for " . $slot['date'] . ".";
                 }
             }
 
+            // Return success and failure messages as JSON
             echo json_encode([
                 'success' => true,
-                'message' => 'All time slots have been successfully added.'
+                'message' => 'All time slots have been processed.',
+                'added' => $successMessages,
+                'failed' => $failedMessages
             ]);
         } catch (PDOException $e) {
             echo json_encode([

@@ -63,4 +63,3 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/doctors\/' . $do
     http_response_code(404); // Not found
     echo json_encode(['success' => false, 'message' => 'Not Found']);
 }
-
