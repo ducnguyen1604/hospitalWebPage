@@ -39,8 +39,8 @@ class BookingController
             foreach ($timeSlots as $slot) {
                 // Bind parameters
                 $stmt->bindParam(':doctor_id', $doctorId);
-                $stmt->bindValue(':user_id', null, PDO::PARAM_NULL); // Since user_id is null
-                $stmt->bindValue(':ticket_price', 0);
+                $stmt->bindParam(':user_id', $slot['user_id']); // Use the user_id from the slot
+                $stmt->bindParam(':ticket_price', $slot['ticket_price']);
                 $stmt->bindParam(':appointment_date', $slot['date']);
                 $stmt->bindParam(':start_time', $slot['startingTime']);
                 $stmt->bindParam(':end_time', $slot['endingTime']);
