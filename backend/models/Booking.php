@@ -4,7 +4,7 @@ class Booking
     private $conn;
     private $table_name = "bookings";
 
-    // Properties
+    // Properties (booking and user properties)
     public $id;
     public $doctor_id;
     public $user_id;
@@ -58,11 +58,21 @@ class Booking
         return false;
     }
 
-    // Method to get bookings by user ID
+    // Method to get bookings by user ID, including user information
     public function getBookingsByUserId($userId)
     {
         try {
-            $query = "SELECT * FROM " . $this->table_name . " WHERE user_id = :user_id";
+            // SQL query to join bookings with users to get user information
+            $query = "
+                SELECT 
+                    bookings.*, 
+                    users.name AS user_name, 
+                    users.email AS user_email, 
+                    users.gender AS user_gender
+                FROM " . $this->table_name . " 
+                JOIN users ON bookings.user_id = users.id
+                WHERE bookings.user_id = :user_id";
+
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':user_id', $userId);
             $stmt->execute();
@@ -70,6 +80,34 @@ class Booking
             $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $bookings;
         } catch (PDOException $e) {
+            // Log error or handle exception
+            return [];
+        }
+    }
+
+    // Additional method to get bookings by doctor ID (if needed)
+    public function getBookingsByDoctorId($doctorId)
+    {
+        try {
+            // SQL query to join bookings with users to get user information
+            $query = "
+                SELECT 
+                    bookings.*, 
+                    users.name AS user_name, 
+                    users.email AS user_email, 
+                    users.gender AS user_gender
+                FROM " . $this->table_name . " 
+                JOIN users ON bookings.user_id = users.id
+                WHERE bookings.doctor_id = :doctor_id";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':doctor_id', $doctorId);
+            $stmt->execute();
+
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $bookings;
+        } catch (PDOException $e) {
+            // Log error or handle exception
             return [];
         }
     }
