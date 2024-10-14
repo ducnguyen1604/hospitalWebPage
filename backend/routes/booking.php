@@ -54,10 +54,31 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/doctors\/' . $do
             }
             break;
 
-        default:
-            http_response_code(405); // Method not allowed
-            echo json_encode(['success' => false, 'message' => 'Invalid request method for time slots']);
-            break;
+            // Add a route to handle updating the booking
+            if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/(\d+)/', $url, $matches)) {
+                $bookingId = $matches[1];
+                switch ($_SERVER['REQUEST_METHOD']) {
+                    case 'PUT':
+                        // Get request headers for token verification
+                        $requestHeaders = getallheaders();
+
+                        // Authenticate token
+                        $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+                        // Only allow doctors to update bookings
+                        $allowedRoles = ['doctor'];
+                        $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
+                        // Call the updateBooking method
+                        $bookingController->updateBooking($bookingId);
+                        break;
+
+                    default:
+                        http_response_code(405); // Method not allowed
+                        echo json_encode(['success' => false, 'message' => 'Invalid request method for bookings']);
+                        break;
+                }
+            }
     }
 } else {
     http_response_code(404); // Not found

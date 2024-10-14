@@ -71,4 +71,59 @@ class BookingController
             ]);
         }
     }
+    // New function to update booking details
+    public function updateBooking($id)
+    {
+        // Fetch the updated data from the request
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        // Check if required fields are present in the request body
+        if (
+            !isset($data['appointment_date']) || !isset($data['ticket_price']) ||
+            !isset($data['start_time']) || !isset($data['end_time'])
+        ) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Missing required fields in the request.'
+            ]);
+            return;
+        }
+
+        try {
+            // Prepare the SQL query to update the booking
+            $query = "UPDATE bookings SET 
+                        appointment_date = :appointment_date, 
+                        ticket_price = :ticket_price, 
+                        start_time = :start_time, 
+                        end_time = :end_time 
+                      WHERE id = :id";
+
+            $stmt = $this->conn->prepare($query);
+
+            // Bind parameters
+            $stmt->bindParam(':appointment_date', $data['appointment_date']);
+            $stmt->bindParam(':ticket_price', $data['ticket_price']);
+            $stmt->bindParam(':start_time', $data['start_time']);
+            $stmt->bindParam(':end_time', $data['end_time']);
+            $stmt->bindParam(':id', $id);
+
+            // Execute the query
+            if ($stmt->execute()) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Booking updated successfully.'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Failed to update booking.'
+                ]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
 }
