@@ -1,15 +1,22 @@
 import React, { useState } from "react";
-import { AiOutlineEdit } from "react-icons/ai"; // Import the pen icon
+import { AiOutlineEdit } from "react-icons/ai";
+import { BASE_URL, token } from "../../config";
 import "react-datepicker/dist/react-datepicker.css";
 
-const Appointment = ({ appointments }) => {
+const Appointment = ({ appointments, setAppointments }) => {
     const [editMode, setEditMode] = useState(null); // Track which appointment is being edited
-    const [editedAppointment, setEditedAppointment] = useState(null); // Store the edited appointment details
+    const [editedAppointment, setEditedAppointment] = useState({}); // Store the edited appointment details
 
     // Handle edit click
     const handleEditClick = (appointment) => {
         setEditMode(appointment.id); // Set the edit mode to the current appointment's ID
-        setEditedAppointment(appointment); // Store the original appointment data for editing
+        setEditedAppointment({
+            id: appointment.id,
+            ticket_price: appointment.ticket_price,
+            appointment_date: appointment.appointment_date ? appointment.appointment_date.split(' ')[0] : '',
+            start_time: appointment.start_time || '',
+            end_time: appointment.end_time || '',
+        }); // Initialize edited appointment with the current values
     };
 
     // Handle input changes for editable fields
@@ -22,28 +29,29 @@ const Appointment = ({ appointments }) => {
 
     // Save the changes and exit edit mode
     const handleSaveClick = async () => {
-        // Call the backend to update the booking (make a PUT or PATCH request)
         try {
-            const res = await fetch(
-                `${BASE_URL}/bookings/${editedAppointment.id}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`, // Add your token
-                    },
-                    body: JSON.stringify({
-                        ticket_price: editedAppointment.ticket_price,
-                        start_time: editedAppointment.start_time, // Send the updated start time
-                        end_time: editedAppointment.end_time, // Send the updated end time
-                    }),
-                }
-            );
+            const res = await fetch(`${BASE_URL}/bookings/${editedAppointment.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    ticket_price: editedAppointment.ticket_price,
+                    appointment_date: editedAppointment.appointment_date,
+                    start_time: editedAppointment.start_time,
+                    end_time: editedAppointment.end_time,
+                }),
+            });
             if (res.ok) {
-                // Handle success
                 console.log("Appointment updated successfully");
+
+                // Update the appointments state with the new data
+                const updatedAppointments = appointments.map((item) =>
+                    item.id === editedAppointment.id ? { ...item, ...editedAppointment } : item
+                );
+                setAppointments(updatedAppointments); // Update the state to reflect the changes
             } else {
-                // Handle error
                 console.error("Failed to update appointment");
             }
         } catch (error) {
@@ -55,7 +63,7 @@ const Appointment = ({ appointments }) => {
     };
 
     return (
-        <div className="max-w-[900px] mx-auto overflow-x-auto"> {/* Limit table width and center it */}
+        <div className="max-w-[900px] mx-auto overflow-x-auto">
             <table className="min-w-full text-left text-sm text-gray-500">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
@@ -63,10 +71,10 @@ const Appointment = ({ appointments }) => {
                         <th scope="col" className="px-2 py-2">Email</th>
                         <th scope="col" className="px-2 py-2">Gender</th>
                         <th scope="col" className="px-2 py-2">Payment</th>
-                        <th scope="col" className="px-2 py-2 w-16">Price</th> {/* Adjusted column width */}
-                        <th scope="col" className="px-2 py-2 w-24">Booked on</th> {/* Adjusted column width */}
-                        <th scope="col" className="px-2 py-2 w-16">Start Time</th> {/* Adjusted column width */}
-                        <th scope="col" className="px-2 py-2 w-16">End Time</th> {/* Adjusted column width */}
+                        <th scope="col" className="px-2 py-2 w-16">Price</th>
+                        <th scope="col" className="px-2 py-2 w-24">Appointment Date</th>
+                        <th scope="col" className="px-2 py-2 w-16">Start Time</th>
+                        <th scope="col" className="px-2 py-2 w-16">End Time</th>
                         <th scope="col" className="px-2 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -77,9 +85,7 @@ const Appointment = ({ appointments }) => {
                         return (
                             <tr key={item.id}>
                                 <th scope="row" className="flex items-center px-2 py-2 text-gray-900 whitespace-nowrap">
-                                    {user.photo && (
-                                        <img src={user.photo} className="w-8 h-8 rounded-full" alt="" />
-                                    )}
+                                    {user.photo && <img src={user.photo} className="w-8 h-8 rounded-full" alt="" />}
                                     <div className="pl-2">
                                         <div className="text-base font-semibold">{user.name || 'N/A'}</div>
                                     </div>
@@ -104,20 +110,31 @@ const Appointment = ({ appointments }) => {
                                         <input
                                             type="number"
                                             className="w-full"
-                                            value={editedAppointment?.ticket_price || ''}
+                                            value={editedAppointment.ticket_price}
                                             onChange={(e) => handleInputChange(e, 'ticket_price')}
                                         />
                                     ) : (
                                         item.ticket_price || 'N/A'
                                     )}
                                 </td>
-                                <td className="px-2 py-2">{item.appointment_date || 'N/A'}</td> {/* Read-Only Booked On */}
+                                <td className="px-2 py-2">
+                                    {editMode === item.id ? (
+                                        <input
+                                            type="date"
+                                            className="w-full"
+                                            value={editedAppointment.appointment_date}
+                                            onChange={(e) => handleInputChange(e, 'appointment_date')}
+                                        />
+                                    ) : (
+                                        item.appointment_date ? item.appointment_date.split(' ')[0] : 'N/A'
+                                    )}
+                                </td>
                                 <td className="px-2 py-2">
                                     {editMode === item.id ? (
                                         <input
                                             type="time"
                                             className="w-full"
-                                            value={editedAppointment?.start_time || ''}
+                                            value={editedAppointment.start_time}
                                             onChange={(e) => handleInputChange(e, 'start_time')}
                                         />
                                     ) : (
@@ -129,7 +146,7 @@ const Appointment = ({ appointments }) => {
                                         <input
                                             type="time"
                                             className="w-full"
-                                            value={editedAppointment?.end_time || ''}
+                                            value={editedAppointment.end_time}
                                             onChange={(e) => handleInputChange(e, 'end_time')}
                                         />
                                     ) : (
@@ -138,10 +155,7 @@ const Appointment = ({ appointments }) => {
                                 </td>
                                 <td className="px-2 py-2">
                                     {editMode === item.id ? (
-                                        <button
-                                            onClick={handleSaveClick}
-                                            className="text-green-600"
-                                        >
+                                        <button onClick={handleSaveClick} className="text-green-600">
                                             Save
                                         </button>
                                     ) : (

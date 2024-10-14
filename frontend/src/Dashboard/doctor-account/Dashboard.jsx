@@ -1,6 +1,4 @@
-import React from "react";
-import userImg from "../../assets/images/doctor-img01.png";
-import { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { authContext } from "../../context/AuthContext";
 import useGetProfile from "../../hooks/useFetchData";
 import { BASE_URL } from "../../config";
@@ -13,19 +11,23 @@ import Profile from "./Profile";
 import Appointment from "./Appointment";
 import TimePosting from "./TimePosting";
 
-const Dashboard = ({ name, about, qualification, experiences }) => {
+const Dashboard = () => {
   const { dispatch } = useContext(authContext);
-  const {
-    data,
-    loading,
-    error,
-    setData: setDoctorData,
-  } = useGetProfile(`${BASE_URL}/doctors/getDoctorProfile`);
+  const { data, loading, error, setData: setDoctorData } = useGetProfile(`${BASE_URL}/doctors/getDoctorProfile`);
   const [tab, setTab] = useState("overview");
+  const [appointments, setAppointments] = useState([]); // Manage appointments in the parent
+
+  // Function to fetch appointments (you can modify this if needed)
+  useEffect(() => {
+    if (data && data.doctor && data.appointments) {
+      setAppointments(data.appointments);
+    }
+  }, [data]);
 
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
   };
+
   // Function to generate random rating
   const getRandomRating = () => {
     return (Math.random() * (5 - 3) + 3).toFixed(1);
@@ -36,8 +38,6 @@ const Dashboard = ({ name, about, qualification, experiences }) => {
   const doctor = data.doctor;
 
   if (!data || !doctor) return null;
-
-  console.log("Doctor data:", data);
 
   return (
     <section>
@@ -67,8 +67,7 @@ const Dashboard = ({ name, about, qualification, experiences }) => {
                   </svg>
                   <span className="sr-only">Info</span>
                   <div className="ml-3 text-sm font-medium">
-                    To get approval, please complete your profile. We&apos;ll
-                    review manullay and approve within 3 days.
+                    To get approval, please complete your profile. We&apos;ll review manually and approve within 3 days.
                   </div>
                 </div>
               )}
@@ -92,11 +91,7 @@ const Dashboard = ({ name, about, qualification, experiences }) => {
                         <div className="flex items-center gap-[6px]">
                           <span className="flex items-center gap-[6px] text-headingColor text-[14px] leading-5 lg:text-[16px] lg:leading-6 font-semibold">
                             <img src={StarIcon} alt="" />
-                            {/* {doctor.averageRating} */}
                             {rating}
-                          </span>
-                          <span className="text-textColor text-[14px] leading-5 lg:text-[16px] lg:leading-6 font-semibold">
-                            {/* ({doctor.totalRating}) */}
                           </span>
                         </div>
                         <p className="text__para font-[15px] lg:max-w-[400px] leading-6">
@@ -104,18 +99,15 @@ const Dashboard = ({ name, about, qualification, experiences }) => {
                         </p>
                       </div>
                     </div>
-                    <DoctorAbout
-                      name={doctor.name}
-                      about={doctor.about}
-                      bio={doctor.bio}
-                      //qualifications={doctor.qualifications}
-                      //experiences={doctor.experiences}
-                    />
+                    <DoctorAbout name={doctor.name} about={doctor.about} bio={doctor.bio} />
                   </div>
                 )}
+
+                {/* Pass down the state for real-time updates */}
                 {tab === "appointments" && (
-                  <Appointment appointments={data?.appointments} />
+                  <Appointment appointments={appointments} setAppointments={setAppointments} />
                 )}
+
                 {tab === "settings" && (
                   <Profile
                     doctorData={doctor}
