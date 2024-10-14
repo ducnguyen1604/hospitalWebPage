@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const TimePosting = ({ doctorData }) => {
+const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess as a prop
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -100,24 +100,45 @@ const TimePosting = ({ doctorData }) => {
     e.preventDefault();
     deleteItem("timeSlots", index);
   };
-
   const submitTimeSlots = async (e) => {
     e.preventDefault();
-
+  
+    // Check if doctor data is available
     if (!doctorData?.doctor?.id) {
       toast.error("Doctor data is not loaded. Please try again.");
       return;
     }
-
+  
+    // Check if time slots are empty
+    if (formData.timeSlots.length === 0) {
+      toast.error("Please add at least one time slot before submitting.");
+      return;
+    }
+  
+    // Validate each time slot (checking for empty fields)
+    for (const slot of formData.timeSlots) {
+      if (!slot.date || !slot.startingTime || !slot.endingTime) {
+        toast.error("Please fill out all fields for each time slot (date, starting time, and ending time).");
+        return;
+      }
+    }
+  
     try {
-      const timeSlotsData = formData.timeSlots.map((slot) => ({
-        user_id: 1, // Replace this with dynamic user_id if needed
-        ticket_price: formData.ticketPrice || "100.00",
-        date: slot.date.toISOString().split("T")[0], // Ensure date is in correct format
-        startingTime: slot.startingTime,
-        endingTime: slot.endingTime,
-      }));
-
+      const timeSlotsData = formData.timeSlots.map((slot) => {
+        // Format date to yyyy-mm-dd without timezone conversion
+        const formattedDate = slot.date.getFullYear() + '-' +
+          String(slot.date.getMonth() + 1).padStart(2, '0') + '-' +
+          String(slot.date.getDate()).padStart(2, '0');
+  
+        return {
+          user_id: 1, // Replace this with dynamic user_id if needed
+          ticket_price: formData.ticketPrice || "100.00",
+          date: formattedDate,  // Use the formatted date
+          startingTime: slot.startingTime,
+          endingTime: slot.endingTime,
+        };
+      });
+  
       const res = await fetch(
         `${BASE_URL}/bookings/doctors/${doctorData.doctor.id}/timeSlots`,
         {
@@ -129,18 +150,27 @@ const TimePosting = ({ doctorData }) => {
           body: JSON.stringify(timeSlotsData),
         }
       );
-
+  
       if (!res.ok) {
-        throw new Error(result.message);
+        const result = await res.json();  // Get the error message from response
+        toast.error(result.message || "Failed to post time slots.");
+        return;
       }
-
+  
       toast.success("Time slots posted successfully!");
+  
+      // Call the onPostSuccess callback to refresh appointments after posting
+      if (onPostSuccess) {
+        onPostSuccess(); // Trigger fetch appointments
+      }
+  
     } catch (err) {
       console.error("Error in submission: ", err);
-      toast.error(err.message);
+      toast.error("An error occurred while posting time slots.");
     }
   };
-
+  
+  
 
   return (
     <div>
@@ -211,4 +241,3 @@ const TimePosting = ({ doctorData }) => {
 };
 
 export default TimePosting;
-

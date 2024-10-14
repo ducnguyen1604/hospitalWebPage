@@ -1,9 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { authContext } from "../../context/AuthContext";
 import useGetProfile from "../../hooks/useFetchData";
-import { BASE_URL } from "../../config";
+import { BASE_URL, token } from "../../config";  // Ensure token is imported
 import Loading from "../../components/Loader/Loading";
-import Error from "../../components/Error/Error";
 import Tabs from "./Tabs";
 import StarIcon from "../../assets/images/Star.png";
 import DoctorAbout from "../../pages/Doctors/DoctorAbout";
@@ -17,10 +16,34 @@ const Dashboard = () => {
   const [tab, setTab] = useState("overview");
   const [appointments, setAppointments] = useState([]); // Manage appointments in the parent
 
-  // Function to fetch appointments (you can modify this if needed)
+  // Function to fetch appointments with the Authorization header
+  const fetchAppointments = async (doctorId) => {
+    try {
+      const res = await fetch(`${BASE_URL}/bookings/doctors/${doctorId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  // Include the token in the Authorization header
+        },
+      });
+      const result = await res.json();
+      console.log('Appointments API Response:', result);
+      if (result.success) {
+        console.log('Fetched Appointments Data:', result.data);
+        setAppointments(result.data); // Set the fetched appointments
+      } else {
+        console.error("Failed to fetch appointments:", result.message);
+      }
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
+  };
+
+  // Fetch doctor profile and then fetch appointments
   useEffect(() => {
-    if (data && data.doctor && data.appointments) {
-      setAppointments(data.appointments);
+    console.log('Doctor Profile Data:', data);
+    if (data && data.doctor) {
+      fetchAppointments(data.doctor.id); // Fetch appointments using the doctor's ID
     }
   }, [data]);
 
@@ -28,14 +51,12 @@ const Dashboard = () => {
     dispatch({ type: "LOGOUT" });
   };
 
-  // Function to generate random rating
   const getRandomRating = () => {
     return (Math.random() * (5 - 3) + 3).toFixed(1);
   };
 
   const rating = getRandomRating();
-
-  const doctor = data.doctor;
+  const doctor = data?.doctor;
 
   if (!data || !doctor) return null;
 
@@ -61,7 +82,7 @@ const Dashboard = () => {
                   >
                     <path
                       fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 10-2 0 1 1 0 001 1h11a1 1 0 100-2v3a1 1 0 001 1H9z"
+                      d="M18 10a8 8 0 11-16 0 8 0 0116 0zm-7-4a1 1 0 10-2 0 1 1 0 001 1h11a1 1 0 100-2v3a1 1 0 001 1H9z"
                       clipRule="evenodd"
                     />
                   </svg>
@@ -103,7 +124,6 @@ const Dashboard = () => {
                   </div>
                 )}
 
-                {/* Pass down the state for real-time updates */}
                 {tab === "appointments" && (
                   <Appointment appointments={appointments} setAppointments={setAppointments} />
                 )}
@@ -116,7 +136,12 @@ const Dashboard = () => {
                     }}
                   />
                 )}
-                {tab === "timepostings" && <TimePosting doctorData={data} />}
+                {tab === "timepostings" && // Inside your Dashboard component:
+                  <TimePosting
+                    doctorData={data}
+                    onPostSuccess={() => fetchAppointments(data.doctor.id)}
+                  />
+                }
               </div>
             </div>
           </div>

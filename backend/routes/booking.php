@@ -46,8 +46,7 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/doctors\/' . $do
             // Check if time slots data is available
             if (!empty($timeSlots)) {
                 // Call the controller to post time slots
-                $response = $bookingController->postTimeSlots($doctorId);
-                echo json_encode(['success' => true, 'message' => 'Time slots posted successfully', 'data' => $response]);
+                $bookingController->postTimeSlots($doctorId);
             } else {
                 http_response_code(400); // Bad request
                 echo json_encode(['success' => false, 'message' => 'No time slots data provided']);
@@ -59,9 +58,37 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/doctors\/' . $do
             echo json_encode(['success' => false, 'message' => 'Invalid request method for time slots']);
             break;
     }
+    exit();  // Add exit to prevent further code execution after time slots are handled
 }
 
-// Add a **separate** route to handle updating the booking
+// Route for fetching bookings with user information (matches URLs like /bookings/doctors/{doctorId})
+if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/doctors\/(\d+)/', $url, $matches)) {
+    $doctorId = $matches[1];
+    switch ($_SERVER['REQUEST_METHOD']) {
+        case 'GET':
+            // Get request headers for token verification
+            $requestHeaders = getallheaders();
+
+            // Authenticate token
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Allow access only to doctors
+            $allowedRoles = ['doctor'];
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
+            // Call the controller to get bookings with user info
+            $bookingController->getBookingsWithUserInfo($doctorId);
+            break;
+
+        default:
+            http_response_code(405); // Method not allowed
+            echo json_encode(['success' => false, 'message' => 'Invalid request method for bookings']);
+            break;
+    }
+    exit();  // Add exit to stop further execution after fetching bookings
+}
+
+// Route for updating booking (matches URLs like /bookings/{bookingId})
 if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/(\d+)/', $url, $matches)) {
     $bookingId = $matches[1];
     switch ($_SERVER['REQUEST_METHOD']) {
@@ -85,7 +112,9 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/(\d+)/', $url, $
             echo json_encode(['success' => false, 'message' => 'Invalid request method for bookings']);
             break;
     }
-} else {
-    http_response_code(404); // Not found
-    echo json_encode(['success' => false, 'message' => 'Not Found']);
+    exit();  // Add exit to stop further execution after updating booking
 }
+
+// If no matching routes were found, return a 404 error
+http_response_code(404); // Not found
+echo json_encode(['success' => false, 'message' => 'Not Found']);

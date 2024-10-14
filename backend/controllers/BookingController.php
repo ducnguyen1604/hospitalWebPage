@@ -71,6 +71,41 @@ class BookingController
             ]);
         }
     }
+
+    // Function to fetch all bookings by doctor ID with user info
+    public function getBookingsWithUserInfo($doctorId)
+    {
+        try {
+            // SQL query to join bookings with users table and get user details
+            $query = "
+            SELECT 
+                bookings.*, 
+                users.name AS user_name, 
+                users.email AS user_email, 
+                users.gender AS user_gender
+            FROM bookings
+            JOIN users ON bookings.user_id = users.id
+            WHERE bookings.doctor_id = :doctor_id";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':doctor_id', $doctorId);
+            $stmt->execute();
+
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Return the result as JSON
+            echo json_encode([
+                'success' => true,
+                'data' => $bookings
+            ]);
+        } catch (PDOException $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
+
     // New function to update booking details
     public function updateBooking($id)
     {

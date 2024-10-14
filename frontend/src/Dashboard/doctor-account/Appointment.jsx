@@ -79,95 +79,90 @@ const Appointment = ({ appointments, setAppointments }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {appointments?.map((item) => {
-                        const user = item.user || {};
-
-                        return (
-                            <tr key={item.id}>
-                                <th scope="row" className="flex items-center px-2 py-2 text-gray-900 whitespace-nowrap">
-                                    {user.photo && <img src={user.photo} className="w-8 h-8 rounded-full" alt="" />}
-                                    <div className="pl-2">
-                                        <div className="text-base font-semibold">{user.name || 'N/A'}</div>
+                    {appointments?.map((item) => (
+                        <tr key={item.id}>
+                            <th scope="row" className="flex items-center px-2 py-2 text-gray-900 whitespace-nowrap">
+                                <div className="pl-2">
+                                    <div className="text-base font-semibold">{item.user_name || 'N/A'}</div>
+                                </div>
+                            </th>
+                            <td className="px-2 py-2">{item.user_email || 'N/A'}</td>
+                            <td className="px-2 py-2">{item.user_gender || 'N/A'}</td>
+                            <td className="px-2 py-2">
+                                {item.is_paid ? (
+                                    <div className="flex items-center">
+                                        <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-1"></div>
+                                        Paid
                                     </div>
-                                </th>
-                                <td className="px-2 py-2">{user.email || 'N/A'}</td>
-                                <td className="px-2 py-2">{user.gender || 'N/A'}</td>
-                                <td className="px-2 py-2">
-                                    {item.isPaid ? (
-                                        <div className="flex items-center">
-                                            <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-1"></div>
-                                            Paid
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center">
-                                            <div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-1"></div>
-                                            Unpaid
-                                        </div>
-                                    )}
-                                </td>
-                                <td className="px-2 py-2">
-                                    {editMode === item.id ? (
-                                        <input
-                                            type="number"
-                                            className="w-full"
-                                            value={editedAppointment.ticket_price}
-                                            onChange={(e) => handleInputChange(e, 'ticket_price')}
-                                        />
-                                    ) : (
-                                        item.ticket_price || 'N/A'
-                                    )}
-                                </td>
-                                <td className="px-2 py-2">
-                                    {editMode === item.id ? (
-                                        <input
-                                            type="date"
-                                            className="w-full"
-                                            value={editedAppointment.appointment_date}
-                                            onChange={(e) => handleInputChange(e, 'appointment_date')}
-                                        />
-                                    ) : (
-                                        item.appointment_date ? item.appointment_date.split(' ')[0] : 'N/A'
-                                    )}
-                                </td>
-                                <td className="px-2 py-2">
-                                    {editMode === item.id ? (
-                                        <input
-                                            type="time"
-                                            className="w-full"
-                                            value={editedAppointment.start_time}
-                                            onChange={(e) => handleInputChange(e, 'start_time')}
-                                        />
-                                    ) : (
-                                        item.start_time || 'N/A'
-                                    )}
-                                </td>
-                                <td className="px-2 py-2">
-                                    {editMode === item.id ? (
-                                        <input
-                                            type="time"
-                                            className="w-full"
-                                            value={editedAppointment.end_time}
-                                            onChange={(e) => handleInputChange(e, 'end_time')}
-                                        />
-                                    ) : (
-                                        item.end_time || 'N/A'
-                                    )}
-                                </td>
-                                <td className="px-2 py-2">
-                                    {editMode === item.id ? (
-                                        <button onClick={handleSaveClick} className="text-green-600">
-                                            Save
-                                        </button>
-                                    ) : (
-                                        <AiOutlineEdit
-                                            onClick={() => handleEditClick(item)}
-                                            className="cursor-pointer text-blue-600"
-                                        />
-                                    )}
-                                </td>
-                            </tr>
-                        );
-                    })}
+                                ) : (
+                                    <div className="flex items-center">
+                                        <div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-1"></div>
+                                        Unpaid
+                                    </div>
+                                )}
+                            </td>
+                            <td className="px-2 py-2">
+                                {editMode === item.id ? (
+                                    <input
+                                        type="number"
+                                        className="w-full"
+                                        value={editedAppointment.ticket_price}
+                                        onChange={(e) => handleInputChange(e, 'ticket_price')}
+                                    />
+                                ) : (
+                                    item.ticket_price || 'N/A'
+                                )}
+                            </td>
+                            <td className="px-2 py-2">
+                                {editMode === item.id ? (
+                                    <input
+                                        type="date"
+                                        className="w-full"
+                                        value={editedAppointment.appointment_date}
+                                        onChange={(e) => handleInputChange(e, 'appointment_date')}
+                                    />
+                                ) : (
+                                    item.appointment_date ? item.appointment_date.split(' ')[0] : 'N/A'
+                                )}
+                            </td>
+                            <td className="px-2 py-2">
+                                {editMode === item.id ? (
+                                    <input
+                                        type="time"
+                                        className="w-full"
+                                        value={editedAppointment.start_time}
+                                        onChange={(e) => handleInputChange(e, 'start_time')}
+                                    />
+                                ) : (
+                                    item.start_time || 'N/A'
+                                )}
+                            </td>
+                            <td className="px-2 py-2">
+                                {editMode === item.id ? (
+                                    <input
+                                        type="time"
+                                        className="w-full"
+                                        value={editedAppointment.end_time}
+                                        onChange={(e) => handleInputChange(e, 'end_time')}
+                                    />
+                                ) : (
+                                    item.end_time || 'N/A'
+                                )}
+                            </td>
+                            <td className="px-2 py-2">
+                                {editMode === item.id ? (
+                                    <button onClick={handleSaveClick} className="text-green-600">
+                                        Save
+                                    </button>
+                                ) : (
+                                    <AiOutlineEdit
+                                        onClick={() => handleEditClick(item)}
+                                        className="cursor-pointer text-blue-600"
+                                    />
+                                )}
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
