@@ -1,6 +1,9 @@
-# IE4727 Project - Video Call Feature 🎥📞
+# IE4727 Project 
+# CarePlus - The Smart Healthcare Platform 🌐  with AI-Powered Assistant 🤖  and Virtual Consultations 💬
 
-This project includes a video call feature for online consultations. Follow the steps below to set up and run the project locally.
+CarePlus is an all-in-one healthcare platform designed to improve patient-doctor interactions, offering features like doctor profile browsing, appointment scheduling, and a built-in video call feature for virtual consultations. With a chatbot powered by Generative AI, it provides pre-diagnosis information and personalized doctor recommendations for a seamless healthcare experience.
+
+Experience seamless healthcare with CarePlus, where AI-powered assistants provide pre-diagnosis insights and personalized doctor recommendations, while virtual consultations bring doctors and patients together effortlessly!
 
 ## 🚀 How to Run Locally
 
@@ -28,6 +31,9 @@ This project includes a video call feature for online consultations. Follow the 
    Open your terminal and move to the frontend directory:
    ```bash
    cd frontend
+   ```
+   ```bash
+   npm run dev
    ```
 2. **Video call**
    App link: [Careplus Prediagnosis](https://careplus-prediagnosis.netlify.app/lobby.html))
