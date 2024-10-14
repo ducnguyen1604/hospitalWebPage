@@ -36,4 +36,4 @@ Experience seamless healthcare with CarePlus, where AI-powered assistants provid
    npm run dev
    ```
 2. **Video call**
-   App link: [Careplus Prediagnosis](https://careplus-prediagnosis.netlify.app/lobby.html))
+   App link: [Careplus Prediagnosis](https://careplus-prediagnosis.netlify.app/lobby.html)
