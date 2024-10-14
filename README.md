@@ -1,19 +1,33 @@
-Project for IE4497
+# IE4727 Project - Video Call Feature 🎥📞
 
-<h1>How to run locally</h1>
+This project includes a video call feature for online consultations. Follow the steps below to set up and run the project locally.
 
-<ol>
-  <dt>Setup environment and run backend</dt>
-  <li>Download XAMPP server</li>
-  <li>Clone the project and move to directory: (current_folder)/XAMPP/htdocs </li>
-  <li>Launch XAMPP server app (or manager-osx on Mac).Turn on all of the appliation (MySQL DB, Apache Web Server) </li>
-  <li>Go to localhost (port 80) in your browser, and click on PHPMyAdmin to access the database</li>
-</ol>
+## 🚀 How to Run Locally
 
-<ol>
-  <dt>Run Frontend</dt>
-  <li>Open the terminal and <em>cd</em> to <em>frontend</em> : <code>cd frontend</code></li>
-  <li>Run <code>npm install</code></li>
-  <li>Run <code>npm run dev</code></li>
-</ol>
+### 1. Setup Environment and Run Backend ⚙️
 
+1. **Download XAMPP Server**  
+   Download and install the [XAMPP server](https://www.apachefriends.org/index.html) for your platform.
+
+2. **Clone the Project**  
+   Clone the repository to your local machine and move the project to the directory:  
+   `current_folder/XAMPP/htdocs`
+
+3. **Launch XAMPP**  
+   Open the XAMPP application (or `manager-osx` on Mac). Turn on the following services:
+
+   - 🐬 MySQL Database
+   - 🌐 Apache Web Server
+
+4. **Access the Database**  
+   Go to `localhost` (port 80) in your browser and click on **PHPMyAdmin** to access the database.
+
+### 2. Run the Frontend 💻
+
+1. **Navigate to the Frontend Folder**  
+   Open your terminal and move to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. **Video call**
+   App link: [Careplus Prediagnosis](https://careplus-prediagnosis.netlify.app/lobby.html))

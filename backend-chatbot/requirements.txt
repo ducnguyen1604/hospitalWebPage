@@ -1,2 +1,5 @@
 python-dotenv
 openai
+flask
+flask_cors
+dotenv
