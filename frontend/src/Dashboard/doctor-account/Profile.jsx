@@ -14,13 +14,12 @@ const Profile = ({ doctorData, onChangeDoctorDetails }) => {
     gender: "",
     specialization: "",
     ticketPrice: 0,
-    //qualifications: [],
-    //experiences: [],
-    //timeSlots: [],
-    //about: "",
     photo: null,
     password: "",
+    role: "",        // Add role
+    isApproved: "",  // Add isApproved
   });
+
 
   useEffect(() => {
     if (doctorData) {
@@ -33,11 +32,9 @@ const Profile = ({ doctorData, onChangeDoctorDetails }) => {
         gender: doctorData?.gender || "",
         specialization: doctorData?.specialization || "",
         ticketPrice: doctorData?.ticket_price || 0,
-        //qualifications: doctorData.doctor?.qualifications || [],
-        //experiences: doctorData.doctor?.experiences || [],
-        //timeSlots: doctorData.doctor?.timeSlots || [],
-        //about: doctorData.doctor?.about || "",
         photo: doctorData?.photo || null,
+        role: doctorData?.role || "",         // Ensure role is loaded
+        isApproved: doctorData?.isApproved || "",  // Ensure isApproved is loaded
       }));
     }
   }, [doctorData]);
@@ -109,23 +106,22 @@ const Profile = ({ doctorData, onChangeDoctorDetails }) => {
   //console.log(doctorData.id);
   const updateProfileHandler = async (e) => {
     e.preventDefault();
+    console.log("Submitting form data:", formData);  // Debugging step
+  
     try {
-      const res = await fetch(
-        `${BASE_URL}/doctors/updateDoctor?id=${doctorData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "content-type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
+      const res = await fetch(`${BASE_URL}/doctors/updateDoctor?id=${doctorData.id}`, {
+        method: "PUT",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+  
       const result = await res.json();
-
+  
       if (!res.ok) {
-        throw Error(result.message);
+        throw new Error(result.message);
       }
       onChangeDoctorDetails(formData);
       toast.success(result.message);
@@ -133,6 +129,7 @@ const Profile = ({ doctorData, onChangeDoctorDetails }) => {
       toast.error(err.message);
     }
   };
+  
 
   // Optional code for adding qualification and Experience
   // const addQualification = (e) => {
@@ -245,11 +242,12 @@ const Profile = ({ doctorData, onChangeDoctorDetails }) => {
                 type="text"
                 name="specialization"
                 value={formData.specialization}
-                onChange={handleInputChange}
+                onChange={handleInputChange}  // Ensure this is correct
                 className="form__input py-3.5"
                 placeholder="Enter your specialization"
               />
             </div>
+
 
             <div>
               <label className="form__label">Ticket Price</label>

@@ -7,6 +7,9 @@ const Appointment = ({ appointments, setAppointments }) => {
     const [editMode, setEditMode] = useState(null); // Track which appointment is being edited
     const [editedAppointment, setEditedAppointment] = useState({}); // Store the edited appointment details
 
+    // Filter to show only appointments with assigned users (user_id !== 0)
+    const filteredAppointments = appointments.filter((item) => item.user_id !== 0);
+
     // Handle edit click
     const handleEditClick = (appointment) => {
         setEditMode(appointment.id); // Set the edit mode to the current appointment's ID
@@ -79,7 +82,7 @@ const Appointment = ({ appointments, setAppointments }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {appointments?.map((item) => (
+                    {filteredAppointments.map((item) => (
                         <tr key={item.id}>
                             <th scope="row" className="flex items-center px-2 py-2 text-gray-900 whitespace-nowrap">
                                 <div className="pl-2">

@@ -77,7 +77,7 @@ switch ($url) {
             $authResult = $tokenMiddleware->authenticate($requestHeaders);
 
             // Restrict access based on roles
-            $allowedRoles = ['admin', 'doctor']; // Adjust the roles as per your needs
+            $allowedRoles = ['patient', 'doctor']; // Adjust the roles as per your needs
             $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
             $id = $_GET['id'] ?? null;
@@ -133,48 +133,29 @@ switch ($url) {
         break;
 
     case '/hospitalWebPage/backend/api/v1/doctors/getDoctor':
-        // Handle GET request for retrieving a single doctor
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-
-            // Get request headers for token verification
-            $requestHeaders = getallheaders();
-
-            // Authenticate token
-            $authResult = $tokenMiddleware->authenticate($requestHeaders);
-
-            // Restrict access based on roles
-            $allowedRoles = ['admin'];
-            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
-
             $id = $_GET['id'] ?? null;
 
             if ($id) {
                 $response = $doctorController->getSingleDoctor($id);
                 echo $response;
             } else {
-                http_response_code(400); // Bad request
+                http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Missing doctor ID']);
             }
         } else {
-            http_response_code(405); // Method not allowed
+            http_response_code(405);
             echo json_encode(['success' => false, 'message' => 'Invalid request method']);
         }
         break;
 
+
     case '/hospitalWebPage/backend/api/v1/doctors/getAllDoctors':
-        // Get request headers for token verification
-        $requestHeaders = getallheaders();
-
-        // Authenticate token
-        $authResult = $tokenMiddleware->authenticate($requestHeaders);
-
-        // Restrict access based on roles
-        $allowedRoles = ['admin'];
-        $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
-
         // Handle GET request for retrieving all doctors
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $searchQuery = $_GET['query'] ?? null;
+
+            // Call the controller method to fetch all doctors
             $response = $doctorController->getAllDoctors($searchQuery);
             echo $response;
         } else {
@@ -182,6 +163,7 @@ switch ($url) {
             echo json_encode(['success' => false, 'message' => 'Invalid request method']);
         }
         break;
+
 
     case '/hospitalWebPage/backend/api/v1/doctors/getDoctorProfile':
         // Handle GET request for retrieving doctor profile

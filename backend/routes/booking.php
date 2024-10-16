@@ -66,18 +66,26 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/doctors\/(\d+)/'
     $doctorId = $matches[1];
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
-            // Get request headers for token verification
-            $requestHeaders = getallheaders();
+            // Get request headers for token verification (optional if needed)
+            //$requestHeaders = getallheaders();
 
-            // Authenticate token
-            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+            try {
+                // Optional: Check if the token exists (only warn if missing)
+                //$authResult = $tokenMiddleware->authenticate($requestHeaders);
 
-            // Allow access only to doctors
-            $allowedRoles = ['doctor'];
-            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+                // Allow any user (guests, patients, doctors, etc.) to fetch bookings
+                // If needed, remove the restrictive role check here to allow everyone access
 
-            // Call the controller to get bookings with user info
-            $bookingController->getBookingsWithUserInfo($doctorId);
+                // Call the controller to get bookings with user info
+                $bookingController->getBookingsWithUserInfo($doctorId);
+            } catch (Exception $e) {
+                // Log and return a warning if token is invalid but don't block access
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Warning: Token verification failed, but continuing with guest access.',
+                    'error' => $e->getMessage()
+                ]);
+            }
             break;
 
         default:
@@ -88,19 +96,17 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/doctors\/(\d+)/'
     exit();  // Add exit to stop further execution after fetching bookings
 }
 
+
 // Route for updating booking (matches URLs like /bookings/{bookingId})
 if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/(\d+)/', $url, $matches)) {
     $bookingId = $matches[1];
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'PUT':
-            // Get request headers for token verification
             $requestHeaders = getallheaders();
-
-            // Authenticate token
             $authResult = $tokenMiddleware->authenticate($requestHeaders);
 
-            // Only allow doctors to update bookings
-            $allowedRoles = ['doctor'];
+            // Allow both patients and doctors to update bookings
+            $allowedRoles = ['patient', 'doctor'];
             $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
 
             // Call the updateBooking method
@@ -112,8 +118,10 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/(\d+)/', $url, $
             echo json_encode(['success' => false, 'message' => 'Invalid request method for bookings']);
             break;
     }
-    exit();  // Add exit to stop further execution after updating booking
+    exit();  // Add exit to prevent further execution
 }
+
+
 
 // If no matching routes were found, return a 404 error
 http_response_code(404); // Not found

@@ -103,37 +103,32 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
   const submitTimeSlots = async (e) => {
     e.preventDefault();
   
-    // Check if doctor data is available
     if (!doctorData?.doctor?.id) {
       toast.error("Doctor data is not loaded. Please try again.");
       return;
     }
   
-    // Check if time slots are empty
     if (formData.timeSlots.length === 0) {
       toast.error("Please add at least one time slot before submitting.");
       return;
     }
   
-    // Validate each time slot (checking for empty fields)
     for (const slot of formData.timeSlots) {
       if (!slot.date || !slot.startingTime || !slot.endingTime) {
-        toast.error("Please fill out all fields for each time slot (date, starting time, and ending time).");
+        toast.error("Please fill out all fields for each time slot.");
         return;
       }
     }
   
     try {
       const timeSlotsData = formData.timeSlots.map((slot) => {
-        // Format date to yyyy-mm-dd without timezone conversion
-        const formattedDate = slot.date.getFullYear() + '-' +
-          String(slot.date.getMonth() + 1).padStart(2, '0') + '-' +
-          String(slot.date.getDate()).padStart(2, '0');
+        const formattedDate =
+          `${slot.date.getFullYear()}-${String(slot.date.getMonth() + 1).padStart(2, '0')}-${String(slot.date.getDate()).padStart(2, '0')}`;
   
         return {
-          user_id: 1, // Replace this with dynamic user_id if needed
+          user_id: slot.user_id || null, // Send null if user_id is empty
           ticket_price: formData.ticketPrice || "100.00",
-          date: formattedDate,  // Use the formatted date
+          date: formattedDate,
           startingTime: slot.startingTime,
           endingTime: slot.endingTime,
         };
@@ -152,25 +147,25 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
       );
   
       if (!res.ok) {
-        const result = await res.json();  // Get the error message from response
+        const result = await res.json();
         toast.error(result.message || "Failed to post time slots.");
         return;
       }
   
       toast.success("Time slots posted successfully!");
   
-      // Call the onPostSuccess callback to refresh appointments after posting
       if (onPostSuccess) {
-        onPostSuccess(); // Trigger fetch appointments
+        onPostSuccess();
       }
-  
     } catch (err) {
       console.error("Error in submission: ", err);
       toast.error("An error occurred while posting time slots.");
     }
   };
   
-  
+
+
+
 
   return (
     <div>
