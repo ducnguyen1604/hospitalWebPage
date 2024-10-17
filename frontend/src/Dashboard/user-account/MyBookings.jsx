@@ -20,7 +20,16 @@ const MyBookings = () => {
     }
   }, [data, user]);
 
+  // Handle changing the user_id to 0 instead of deleting the booking
   const handleDelete = async (id) => {
+    const appointment = appointments.find((item) => item.id === id);
+  
+    // Ensure the appointment exists before proceeding
+    if (!appointment) {
+      toast.error('Appointment not found.');
+      return;
+    }
+  
     try {
       const res = await fetch(`${BASE_URL}/bookings/${id}`, {
         method: 'PUT',
@@ -28,21 +37,30 @@ const MyBookings = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ user_id: 0 }), // Set user_id to 0
+        body: JSON.stringify({
+          user_id: 0, // Reset the user_id to indicate deletion
+          appointment_date: appointment.appointment_date,
+          ticket_price: appointment.ticket_price,
+          start_time: appointment.start_time,
+          end_time: appointment.end_time,
+        }),
       });
   
+      const result = await res.json();
+      console.log('Response:', result);
+  
       if (res.ok) {
-        toast.success('Booking cancelled successfully!');
-        setAppointments((prev) => prev.filter((appointment) => appointment.id !== id));
+        toast.success('Booking removed successfully!');
+        setAppointments((prev) => prev.filter((item) => item.id !== id));
       } else {
-        const result = await res.json();
-        toast.error(result.message || 'Failed to cancel the booking.');
+        toast.error(result.message || 'Failed to remove the booking.');
       }
     } catch (error) {
       console.error('Error:', error);
-      toast.error('An error occurred while cancelling the booking.');
+      toast.error('An error occurred while removing the booking.');
     }
   };
+  
   
 
   if (loading) return <Loading />;
