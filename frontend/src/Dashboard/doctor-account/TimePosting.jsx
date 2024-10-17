@@ -100,68 +100,77 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
     e.preventDefault();
     deleteItem("timeSlots", index);
   };
+
   const submitTimeSlots = async (e) => {
-    e.preventDefault();
-  
-    if (!doctorData?.doctor?.id) {
-      toast.error("Doctor data is not loaded. Please try again.");
+  e.preventDefault();
+
+  if (!doctorData?.doctor?.id) {
+    toast.error("Doctor data is not loaded. Please try again.");
+    return;
+  }
+
+  if (formData.timeSlots.length === 0) {
+    toast.error("Please add at least one time slot before submitting.");
+    return;
+  }
+
+  // Validate each time slot
+  for (const slot of formData.timeSlots) {
+    if (!slot.date || !slot.startingTime || !slot.endingTime) {
+      toast.error("Please fill out all fields for each time slot.");
       return;
     }
-  
-    if (formData.timeSlots.length === 0) {
-      toast.error("Please add at least one time slot before submitting.");
+
+    // Check if the start time is before the end time
+    if (slot.startingTime >= slot.endingTime) {
+      toast.error("End time cannot be before or equal to the start time.");
       return;
     }
-  
-    for (const slot of formData.timeSlots) {
-      if (!slot.date || !slot.startingTime || !slot.endingTime) {
-        toast.error("Please fill out all fields for each time slot.");
-        return;
+  }
+
+  try {
+    const timeSlotsData = formData.timeSlots.map((slot) => {
+      const formattedDate =
+        `${slot.date.getFullYear()}-${String(slot.date.getMonth() + 1).padStart(2, '0')}-${String(slot.date.getDate()).padStart(2, '0')}`;
+
+      return {
+        user_id: slot.user_id || null, // Send null if user_id is empty
+        ticket_price: formData.ticketPrice || "100.00",
+        date: formattedDate,
+        startingTime: slot.startingTime,
+        endingTime: slot.endingTime,
+      };
+    });
+
+    const res = await fetch(
+      `${BASE_URL}/bookings/doctors/${doctorData.doctor.id}/timeSlots`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(timeSlotsData),
       }
+    );
+
+    if (!res.ok) {
+      const result = await res.json();
+      toast.error(result.message || "Failed to post time slots.");
+      return;
     }
-  
-    try {
-      const timeSlotsData = formData.timeSlots.map((slot) => {
-        const formattedDate =
-          `${slot.date.getFullYear()}-${String(slot.date.getMonth() + 1).padStart(2, '0')}-${String(slot.date.getDate()).padStart(2, '0')}`;
-  
-        return {
-          user_id: slot.user_id || null, // Send null if user_id is empty
-          ticket_price: formData.ticketPrice || "100.00",
-          date: formattedDate,
-          startingTime: slot.startingTime,
-          endingTime: slot.endingTime,
-        };
-      });
-  
-      const res = await fetch(
-        `${BASE_URL}/bookings/doctors/${doctorData.doctor.id}/timeSlots`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(timeSlotsData),
-        }
-      );
-  
-      if (!res.ok) {
-        const result = await res.json();
-        toast.error(result.message || "Failed to post time slots.");
-        return;
-      }
-  
-      toast.success("Time slots posted successfully!");
-  
-      if (onPostSuccess) {
-        onPostSuccess();
-      }
-    } catch (err) {
-      console.error("Error in submission: ", err);
-      toast.error("An error occurred while posting time slots.");
+
+    toast.success("Time slots posted successfully!");
+
+    if (onPostSuccess) {
+      onPostSuccess();
     }
-  };
+  } catch (err) {
+    console.error("Error in submission: ", err);
+    toast.error("An error occurred while posting time slots.");
+  }
+};
+
   
 
 

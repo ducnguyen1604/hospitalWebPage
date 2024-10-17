@@ -31,9 +31,11 @@ const Home = () => {
                         <div>
                             <div className='lg:w-[570px]'>
                                 <h1 className='text-[36px] leading-[46px] text-headingColor font-[800] md:text-[60px] md:leading-[70px]'>We help Patient live a heathy life longer life</h1>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum. Vivamus nisl leo, condimentum ut mauris quis, venenatis feugiat eros. Sed et erat fringilla, feugiat ipsum quis, elementum nunc.</p>
-
-                                <button className='btn transform transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700'>Request appointment</button>
+                                <p className='mt-5'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum. Vivamus nisl leo, condimentum ut mauris quis, venenatis feugiat eros. Sed et erat fringilla, feugiat ipsum quis, elementum nunc.</p>
+                                <Link to='doctors'>
+                                    <button className='btn transform transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700'>Request appointment</button>
+                                </Link>
+                               
                             </div>
 
                             {/* <!-- Counter --> */}
