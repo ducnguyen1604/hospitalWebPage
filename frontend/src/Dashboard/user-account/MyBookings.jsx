@@ -23,23 +23,27 @@ const MyBookings = () => {
   const handleDelete = async (id) => {
     try {
       const res = await fetch(`${BASE_URL}/bookings/${id}`, {
-        method: 'DELETE',
+        method: 'PUT',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({ user_id: 0 }), // Set user_id to 0
       });
-
+  
       if (res.ok) {
-        toast.success('Booking deleted successfully!');
+        toast.success('Booking cancelled successfully!');
         setAppointments((prev) => prev.filter((appointment) => appointment.id !== id));
       } else {
-        toast.error('Failed to delete the booking.');
+        const result = await res.json();
+        toast.error(result.message || 'Failed to cancel the booking.');
       }
     } catch (error) {
       console.error('Error:', error);
-      toast.error('An error occurred while deleting the booking.');
+      toast.error('An error occurred while cancelling the booking.');
     }
   };
+  
 
   if (loading) return <Loading />;
   if (error) return <Error errMessage={error} />;

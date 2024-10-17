@@ -1,28 +1,26 @@
 import React, { useState } from "react";
-import { AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { BASE_URL, token } from "../../config";
 import "react-datepicker/dist/react-datepicker.css";
+import { toast } from "react-toastify"; // For notifications
 
 const Appointment = ({ appointments, setAppointments }) => {
-    const [editMode, setEditMode] = useState(null); // Track which appointment is being edited
-    const [editedAppointment, setEditedAppointment] = useState({}); // Store the edited appointment details
+    const [editMode, setEditMode] = useState(null);
+    const [editedAppointment, setEditedAppointment] = useState({});
 
-    // Filter to show only appointments with assigned users (user_id !== 0)
     const filteredAppointments = appointments.filter((item) => item.user_id !== 0);
 
-    // Handle edit click
     const handleEditClick = (appointment) => {
-        setEditMode(appointment.id); // Set the edit mode to the current appointment's ID
+        setEditMode(appointment.id);
         setEditedAppointment({
             id: appointment.id,
             ticket_price: appointment.ticket_price,
             appointment_date: appointment.appointment_date ? appointment.appointment_date.split(' ')[0] : '',
             start_time: appointment.start_time || '',
             end_time: appointment.end_time || '',
-        }); // Initialize edited appointment with the current values
+        });
     };
 
-    // Handle input changes for editable fields
     const handleInputChange = (e, field) => {
         setEditedAppointment({
             ...editedAppointment,
@@ -30,7 +28,6 @@ const Appointment = ({ appointments, setAppointments }) => {
         });
     };
 
-    // Save the changes and exit edit mode
     const handleSaveClick = async () => {
         try {
             const res = await fetch(`${BASE_URL}/bookings/${editedAppointment.id}`, {
@@ -46,23 +43,45 @@ const Appointment = ({ appointments, setAppointments }) => {
                     end_time: editedAppointment.end_time,
                 }),
             });
-            if (res.ok) {
-                console.log("Appointment updated successfully");
 
-                // Update the appointments state with the new data
+            if (res.ok) {
+                toast.success("Appointment updated successfully");
                 const updatedAppointments = appointments.map((item) =>
                     item.id === editedAppointment.id ? { ...item, ...editedAppointment } : item
                 );
-                setAppointments(updatedAppointments); // Update the state to reflect the changes
+                setAppointments(updatedAppointments);
             } else {
-                console.error("Failed to update appointment");
+                toast.error("Failed to update appointment");
             }
         } catch (error) {
             console.error("Error:", error);
+            toast.error("An error occurred while updating the appointment");
         }
 
-        // Exit edit mode after saving
         setEditMode(null);
+    };
+
+    const handleDeleteClick = async (id) => {
+        if (window.confirm("Are you sure you want to delete this booking?")) {
+            try {
+                const res = await fetch(`${BASE_URL}/bookings/${id}`, {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (res.ok) {
+                    toast.success("Booking deleted successfully");
+                    setAppointments(appointments.filter((item) => item.id !== id));
+                } else {
+                    toast.error("Failed to delete booking");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                toast.error("An error occurred while deleting the booking");
+            }
+        }
     };
 
     return (
@@ -109,7 +128,7 @@ const Appointment = ({ appointments, setAppointments }) => {
                                     <input
                                         type="number"
                                         className="w-full"
-                                        value={editedAppointment.ticket_price}
+                                        value={editedAppointment.ticket_price || ''}
                                         onChange={(e) => handleInputChange(e, 'ticket_price')}
                                     />
                                 ) : (
@@ -121,7 +140,7 @@ const Appointment = ({ appointments, setAppointments }) => {
                                     <input
                                         type="date"
                                         className="w-full"
-                                        value={editedAppointment.appointment_date}
+                                        value={editedAppointment.appointment_date || ''}
                                         onChange={(e) => handleInputChange(e, 'appointment_date')}
                                     />
                                 ) : (
@@ -133,7 +152,7 @@ const Appointment = ({ appointments, setAppointments }) => {
                                     <input
                                         type="time"
                                         className="w-full"
-                                        value={editedAppointment.start_time}
+                                        value={editedAppointment.start_time || ''}
                                         onChange={(e) => handleInputChange(e, 'start_time')}
                                     />
                                 ) : (
@@ -145,14 +164,14 @@ const Appointment = ({ appointments, setAppointments }) => {
                                     <input
                                         type="time"
                                         className="w-full"
-                                        value={editedAppointment.end_time}
+                                        value={editedAppointment.end_time || ''}
                                         onChange={(e) => handleInputChange(e, 'end_time')}
                                     />
                                 ) : (
                                     item.end_time || 'N/A'
                                 )}
                             </td>
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2 flex space-x-2">
                                 {editMode === item.id ? (
                                     <button onClick={handleSaveClick} className="text-green-600">
                                         Save
@@ -163,6 +182,10 @@ const Appointment = ({ appointments, setAppointments }) => {
                                         className="cursor-pointer text-blue-600"
                                     />
                                 )}
+                                <AiOutlineDelete
+                                    onClick={() => handleDeleteClick(item.id)}
+                                    className="cursor-pointer text-red-600 hover:text-red-800"
+                                />
                             </td>
                         </tr>
                     ))}
