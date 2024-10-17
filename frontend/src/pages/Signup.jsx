@@ -74,6 +74,7 @@ const Signup = () => {
         },
         body: JSON.stringify(formData)
       });
+      console.log('Response:', res);
       console.log(formData);
       const { message } = await res.json();
       console.log(message);

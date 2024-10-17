@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 import { FaHeartbeat, FaStethoscope, FaUserNurse, FaVials, FaAmbulance, FaSyringe } from 'react-icons/fa';
 
 const servicesData = [
@@ -44,8 +45,8 @@ const Services = () => {
   return (
     <section className="bg-[#f8fafc] py-20">
       <div className="container mx-auto px-5">
-        <h2 className="text-4xl font-bold text-center text-blue-800 mb-12">Our Services</h2>
-        
+        <h2 className=" text-center heading mb-6">Our Services</h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {servicesData.map((service) => (
             <div
@@ -68,9 +69,12 @@ const Services = () => {
           <p className="text-gray-500">
             Your health is our priority. We provide world-class medical services with a commitment to care and well-being.
           </p>
-          <button className="mt-8 px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-transform duration-100 ease-in-out active:scale-95">
-            Book an Appointment
-          </button>
+          <Link to='/doctors'>
+            <button className="mt-8 px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-transform duration-100 ease-in-out active:scale-95">
+              Book an Appointment
+            </button>
+          </Link>
+
         </div>
       </div>
     </section>
