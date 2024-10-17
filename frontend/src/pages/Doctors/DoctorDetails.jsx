@@ -18,6 +18,7 @@ const DoctorDetails = () => {
 
   console.log('Full Doctor Response:', responseData);  // Log the entire response
   console.log('name', doctor)
+  console.log('bio', doctor.bio)
 
   const [tab, setTab] = useState('about');
 
@@ -58,8 +59,8 @@ const DoctorDetails = () => {
                   </span>
                 </div>
 
-                <p className="text__para text-[14px] leading-5 md:text-[15px] lg:max-w-[450px]">
-                  {doctor.bio || 'No bio available for this doctor.'}
+                <p className="mt-3 font-bold text-[20px] leading-5 md:text-[15px] lg:max-w-[450px]">
+                  Contact Number: {doctor.phone || 'The Phone Number will be updated soon.'}
                 </p>
               </div>
             </div>
@@ -80,7 +81,7 @@ const DoctorDetails = () => {
             </div>
 
             <div>
-              {tab === 'about' && <DoctorAbout name={doctor.name} about={doctor.bio} />}
+              {tab === 'about' && <DoctorAbout name={doctor.name} bio={doctor.bio} />}
               {tab === 'feedback' && <Feedback />}
             </div>
           </div>
