@@ -20,7 +20,7 @@ const About = () => {
                 <h2 className='heading'>Proud to be the best Islandwide</h2>
                 <p className='text__para'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum. Vivamus nisl leo, condimentum ut mauris quis, venenatis feugiat eros. Sed et erat fringilla, feugiat ipsum quis, elementum nunc. </p>
                 <p className='text__para mt-[25px]'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum. Vivamus nisl leo, condimentum ut mauris quis, venenatis feugiat eros. Sed et erat fringilla, feugiat ipsum quis, elementum nunc. </p>
-                <Link to='/serivces'>
+                <Link to='/services'>
                 <button className='btn'>Learn More</button>
                 </Link>
 

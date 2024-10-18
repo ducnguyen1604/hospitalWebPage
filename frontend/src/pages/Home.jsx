@@ -35,7 +35,7 @@ const Home = () => {
                                 <Link to='doctors'>
                                     <button className='btn transform transition-transform duration-100 ease-in-out active:scale-95 active:bg-blue-700'>Request appointment</button>
                                 </Link>
-                               
+
                             </div>
 
                             {/* <!-- Counter --> */}
@@ -58,9 +58,6 @@ const Home = () => {
                                     <p className='text__para'>Patient Satisfaction</p>
                                 </div>
 
-
-
-
                             </div>
                         </div>
 
@@ -80,69 +77,144 @@ const Home = () => {
             </section>
 
             {/* <!-- Intro --> */}
-            <section>
-                <div className='container'>
-                    <div className='lg:w-[470px] mx-auto'>
-                        <h2 className='heading text-center'>Providing the Best Medical</h2>
-                        <p className='text__para text-center'>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut elit mollis, elementum nulla id, scelerisque sapien. Morbi in mollis erat.
+
+            <section className="bg-gray-50 py-16">
+                <div className="container mx-auto">
+                    <div className="text-center max-w-xl mx-auto mb-12">
+                        <h2 className="text-3xl lg:text-4xl font-bold text-headingColor mb-4">
+                            Providing the Best Medical
+                        </h2>
+                        <p className="text-lg text-gray-600">
+                            Experience top-tier healthcare with our trusted professionals. We are committed to your health and well-being with personalized care and the latest medical technology.
                         </p>
                     </div>
 
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]'>
-                        <div className='py-[30px] px-5'>
-                            <div className='flex items-center justify-center'>
-                                <img src={icon01} alt="" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-12">
+                        {/* Card 1 */}
+                        <Link to="/doctors" className="group">
+                            <div className="p-6 bg-white shadow-md rounded-lg hover:shadow-xl transition-shadow">
+                                <div className="flex items-center mb-4">
+                                    <img src={icon01} alt="Find a Doctor" className="h-12 w-12 mr-4" />
+                                    <h3 className="text-xl font-semibold text-headingColor group-hover:text-primaryColor">
+                                        Find a Doctor
+                                    </h3>
+                                </div>
+                                <p className="text-gray-600 leading-7">
+                                    Browse our directory of experienced doctors and specialists. Choose the one that best fits your needs and get expert medical advice.
+                                </p>
                             </div>
-                            <div className='mt-[30px]'>
-                                <h2 className='text-[26px] leading-9 text-headingColor font-[700] text-center'>Find a Doctor</h2>
-                                <p className='text-[16px] leading-7 text-textColor font-[400] mt-4 text-center'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut elit mollis, elementum nulla id, scelerisque sapien. Morbi in mollis erat.</p>
-                                <Link to='/doctors' className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[30px] mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
-                                    <BsArrowRight className='group-hover:text-white w-6 h-5' />
-                                </Link>
+                        </Link>
+
+                        {/* Card 2 */}
+                        <Link to="/doctors" className="group">
+                            <div className="p-6 bg-white shadow-md rounded-lg hover:shadow-xl transition-shadow">
+                                <div className="flex items-center mb-4">
+                                    <img src={icon02} alt="Find a Center" className="h-12 w-12 mr-4" />
+                                    <h3 className="text-xl font-semibold text-headingColor group-hover:text-primaryColor">
+                                        Find a Center
+                                    </h3>
+                                </div>
+                                <p className="text-gray-600 leading-7">
+                                    Locate the nearest healthcare center or clinic. We have multiple locations to serve you better, ensuring prompt and efficient care.
+                                </p>
                             </div>
-                        </div>
-                        <div className='py-[30px] px-5'>
-                            <div className='flex items-center justify-center'>
-                                <img src={icon02} alt="" />
+                        </Link>
+
+                        {/* Card 3 */}
+                        <Link to="/doctors" className="group">
+                            <div className="p-6 bg-white shadow-md rounded-lg hover:shadow-xl transition-shadow">
+                                <div className="flex items-center mb-4">
+                                    <img src={icon03} alt="Book an Appointment" className="h-12 w-12 mr-4" />
+                                    <h3 className="text-xl font-semibold text-headingColor group-hover:text-primaryColor">
+                                        Book an Appointment
+                                    </h3>
+                                </div>
+                                <p className="text-gray-600 leading-7">
+                                    Schedule an appointment at your convenience. We offer online booking for easy access to consultations and follow-ups.
+                                </p>
                             </div>
-                            <div className='mt-[30px]'>
-                                <h2 className='text-[26px] leading-9 text-headingColor font-[700] text-center'>Find a Center</h2>
-                                <p className='text-[16px] leading-7 text-textColor font-[400] mt-4 text-center'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut elit mollis, elementum nulla id, scelerisque sapien. Morbi in mollis erat.</p>
-                                <Link to='/doctors' className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[30px] mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
-                                    <BsArrowRight />
-                                </Link>
-                            </div>
-                        </div>
-                        <div className='py-[30px] px-5'>
-                            <div className='flex items-center justify-center'>
-                                <img src={icon03} alt="" />
-                            </div>
-                            <div className='mt-[30px]'>
-                                <h2 className='text-[26px] leading-9 text-headingColor font-[700] text-center'>Book an Appointment</h2>
-                                <p className='text-[16px] leading-7 text-textColor font-[400] mt-4 text-center'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut elit mollis, elementum nulla id, scelerisque sapien. Morbi in mollis erat.</p>
-                                <Link to='/doctors' className='w-[44px] h-[44px] border border-solid border-[#181a1E] rounded-full mt-[30px] mx-auto flex items-center justify-center group hover:bg-primaryColor hover:border-none' >
-                                    <BsArrowRight />
-                                </Link>
-                            </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </section>
+
 
             {/* <!-- About --> */}
             <About></About>
 
             {/* <!-- Services --> */}
-            <section>
-                <div className='container'>
-                    <div className='xl:w-[450px] mx-auto'>
-                        <h2 className='heading text-center'>Our Medical Services</h2>
-                        <p className='text__para text-center'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum.</p>
+            <section className="bg-gray-50 py-16">
+                <div className="container mx-auto">
+                    <div className="text-center max-w-xl mx-auto mb-12">
+                        <h2 className="text-3xl lg:text-4xl font-bold text-headingColor mb-4">
+                            Our Medical Services
+                        </h2>
+                        <p className="text-lg text-gray-600">
+                            Providing high-quality, personalized healthcare. We ensure every patient gets the best treatment and care.
+                        </p>
                     </div>
-                    <ServicesList />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {/* Service 1 */}
+                        <div className="group bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                            <div className="flex items-center justify-center h-16 w-16 bg-blue-100 rounded-full mb-6">
+                                <img src={icon01} alt="Service Icon" className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-2xl font-semibold mb-4 group-hover:text-blue-600 transition-colors">
+                                General Checkup
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                                Regular health checkups help detect potential health issues early. Our general checkup service ensures you stay on top of your health.
+                            </p>
+                            <Link
+                                to="/doctors"
+                                className="text-primaryColor font-semibold flex items-center group-hover:underline"
+                            >
+                                Learn More <BsArrowRight className="ml-2" />
+                            </Link>
+                        </div>
+
+                        {/* Service 2 */}
+                        <div className="group bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                            <div className="flex items-center justify-center h-16 w-16 bg-purple-100 rounded-full mb-6">
+                                <img src={icon02} alt="Service Icon" className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-2xl font-semibold mb-4 group-hover:text-purple-600 transition-colors">
+                                Surgery Department
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                                Our expert surgeons provide top-tier surgical care with state-of-the-art equipment and facilities to ensure the best outcomes.
+                            </p>
+                            <Link
+                                to="/doctors"
+                                className="text-primaryColor font-semibold flex items-center group-hover:underline"
+                            >
+                                Learn More <BsArrowRight className="ml-2" />
+                            </Link>
+                        </div>
+
+                        {/* Service 3 */}
+                        <div className="group bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                            <div className="flex items-center justify-center h-16 w-16 bg-yellow-100 rounded-full mb-6">
+                                <img src={icon03} alt="Service Icon" className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-2xl font-semibold mb-4 group-hover:text-yellow-600 transition-colors">
+                                Pediatrics
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                                We provide specialized healthcare services for children, ensuring their well-being and healthy growth from infancy to adolescence.
+                            </p>
+                            <Link
+                                to="/doctors"
+                                className="text-primaryColor font-semibold flex items-center group-hover:underline"
+                            >
+                                Learn More <BsArrowRight className="ml-2" />
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </section>
+
 
             {/* <!-- Features --> */}
             <section>
@@ -155,7 +227,7 @@ const Home = () => {
                             </h2>
                             <ul className='pl-4'>
                                 <li className='text__para'>
-                                    1.Schedule a virtual visit with a doctor from the comfort of your home.
+                                    1. Schedule a virtual visit with a doctor from the comfort of your home.
                                 </li>
                                 <li className='text__para'>
                                     2. Search for your doctor and their contact here.
@@ -198,7 +270,7 @@ const Home = () => {
                 <div className='container'>
                     <div className='xl:w-[450px] mx-auto'>
                         <h2 className='heading text-center'>
-                           Our Great Doctor
+                            Our Great Doctor
                         </h2>
                         <p className='text__para text-center'>
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum.
