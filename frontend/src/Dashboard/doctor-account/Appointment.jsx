@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
-import { FaVideo } from "react-icons/fa"; // Video call icon
+import { FaVideo } from "react-icons/fa";
 import { BASE_URL, token } from "../../config";
 import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
@@ -8,27 +8,30 @@ import { toast } from "react-toastify";
 const Appointment = ({ appointments, setAppointments }) => {
   const [editMode, setEditMode] = useState(null);
   const [editedAppointment, setEditedAppointment] = useState({});
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const filteredAppointments = appointments.filter((item) => item.user_id !== 0);
 
+  const sortedAppointments = [...filteredAppointments].sort((a, b) => {
+    const dateA = new Date(a.appointment_date);
+    const dateB = new Date(b.appointment_date);
+    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+  });
+
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
   const handleEditClick = (appointment) => {
     setEditMode(appointment.id);
-    setEditedAppointment({
-      id: appointment.id,
-      ticket_price: appointment.ticket_price,
-      appointment_date: appointment.appointment_date
-        ? appointment.appointment_date.split(" ")[0]
-        : "",
-      start_time: appointment.start_time || "",
-      end_time: appointment.end_time || "",
-    });
+    setEditedAppointment({ ...appointment });
   };
 
   const handleInputChange = (e, field) => {
-    setEditedAppointment({
-      ...editedAppointment,
+    setEditedAppointment((prev) => ({
+      ...prev,
       [field]: e.target.value,
-    });
+    }));
   };
 
   const handleSaveClick = async () => {
@@ -39,20 +42,17 @@ const Appointment = ({ appointments, setAppointments }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ticket_price: editedAppointment.ticket_price,
-          appointment_date: editedAppointment.appointment_date,
-          start_time: editedAppointment.start_time,
-          end_time: editedAppointment.end_time,
-        }),
+        body: JSON.stringify(editedAppointment),
       });
 
       if (res.ok) {
         toast.success("Appointment updated successfully");
-        const updatedAppointments = appointments.map((item) =>
-          item.id === editedAppointment.id ? { ...item, ...editedAppointment } : item
+        setAppointments((prev) =>
+          prev.map((item) =>
+            item.id === editedAppointment.id ? { ...item, ...editedAppointment } : item
+          )
         );
-        setAppointments(updatedAppointments);
+        setEditMode(null);
       } else {
         toast.error("Failed to update appointment");
       }
@@ -60,8 +60,6 @@ const Appointment = ({ appointments, setAppointments }) => {
       console.error("Error:", error);
       toast.error("An error occurred while updating the appointment");
     }
-
-    setEditMode(null);
   };
 
   const handleDeleteClick = async (id) => {
@@ -76,7 +74,7 @@ const Appointment = ({ appointments, setAppointments }) => {
 
         if (res.ok) {
           toast.success("Booking deleted successfully");
-          setAppointments(appointments.filter((item) => item.id !== id));
+          setAppointments((prev) => prev.filter((item) => item.id !== id));
         } else {
           toast.error("Failed to delete booking");
         }
@@ -98,26 +96,27 @@ const Appointment = ({ appointments, setAppointments }) => {
       <table className="min-w-full text-left text-sm text-gray-500">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
-            <th scope="col" className="px-2 py-2">Name</th>
-            <th scope="col" className="px-2 py-2">Email</th>
-            <th scope="col" className="px-2 py-2">Gender</th>
-            <th scope="col" className="px-2 py-2">Payment</th>
-            <th scope="col" className="px-2 py-2 w-16">Price</th>
-            <th scope="col" className="px-2 py-2 w-24">Appointment Date</th>
-            <th scope="col" className="px-2 py-2 w-16">Start Time</th>
-            <th scope="col" className="px-2 py-2 w-16">End Time</th>
-            <th scope="col" className="px-2 py-2">Actions</th>
-            <th scope="col" className="px-2 py-2">Video Call</th> {/* New column for video call */}
+            <th className="px-2 py-2">Name</th>
+            <th className="px-2 py-2">Email</th>
+            <th className="px-2 py-2">Gender</th>
+            <th className="px-2 py-2">Payment</th>
+            <th className="px-2 py-2 w-16">Price</th>
+            <th
+              className="px-2 py-2 w-24 cursor-pointer"
+              onClick={toggleSortOrder}
+            >
+              Appointment Date {sortOrder === "asc" ? "↑" : "↓"}
+            </th>
+            <th className="px-2 py-2 w-16">Start Time</th>
+            <th className="px-2 py-2 w-16">End Time</th>
+            <th className="px-2 py-2">Actions</th>
+            <th className="px-2 py-2">Video Call</th>
           </tr>
         </thead>
         <tbody>
-          {filteredAppointments.map((item) => (
+          {sortedAppointments.map((item) => (
             <tr key={item.id}>
-              <th scope="row" className="flex items-center px-2 py-2 text-gray-900 whitespace-nowrap">
-                <div className="pl-2">
-                  <div className="text-base font-semibold">{item.user_name || "N/A"}</div>
-                </div>
-              </th>
+              <td className="px-2 py-2">{item.user_name || "N/A"}</td>
               <td className="px-2 py-2">{item.user_email || "N/A"}</td>
               <td className="px-2 py-2">{item.user_gender || "N/A"}</td>
               <td className="px-2 py-2">
@@ -133,17 +132,68 @@ const Appointment = ({ appointments, setAppointments }) => {
                   </div>
                 )}
               </td>
-              <td className="px-2 py-2">{item.ticket_price || "N/A"}</td>
               <td className="px-2 py-2">
-                {item.appointment_date ? item.appointment_date.split(" ")[0] : "N/A"}
+                {editMode === item.id ? (
+                  <input
+                    type="number"
+                    value={editedAppointment.ticket_price || ""}
+                    onChange={(e) => handleInputChange(e, "ticket_price")}
+                    className="w-full"
+                  />
+                ) : (
+                  item.ticket_price || "N/A"
+                )}
               </td>
-              <td className="px-2 py-2">{item.start_time || "N/A"}</td>
-              <td className="px-2 py-2">{item.end_time || "N/A"}</td>
+              <td className="px-2 py-2">
+                {editMode === item.id ? (
+                  <input
+                    type="date"
+                    value={editedAppointment.appointment_date || ""}
+                    onChange={(e) => handleInputChange(e, "appointment_date")}
+                    className="w-full"
+                  />
+                ) : (
+                  item.appointment_date.split(" ")[0] || "N/A"
+                )}
+              </td>
+              <td className="px-2 py-2">
+                {editMode === item.id ? (
+                  <input
+                    type="time"
+                    value={editedAppointment.start_time || ""}
+                    onChange={(e) => handleInputChange(e, "start_time")}
+                    className="w-full"
+                  />
+                ) : (
+                  item.start_time || "N/A"
+                )}
+              </td>
+              <td className="px-2 py-2">
+                {editMode === item.id ? (
+                  <input
+                    type="time"
+                    value={editedAppointment.end_time || ""}
+                    onChange={(e) => handleInputChange(e, "end_time")}
+                    className="w-full"
+                  />
+                ) : (
+                  item.end_time || "N/A"
+                )}
+              </td>
               <td className="px-2 py-2 flex space-x-2">
-                <AiOutlineEdit
-                  onClick={() => handleEditClick(item)}
-                  className="cursor-pointer text-blue-600"
-                />
+                {editMode === item.id ? (
+                  <button
+                    onClick={handleSaveClick}
+                    className="text-green-600"
+                  >
+                    Save
+                  </button>
+                ) : (
+                  <AiOutlineEdit
+                    onClick={() => handleEditClick(item)}
+                    className="cursor-pointer text-blue-600"
+                  />
+                )}
                 <AiOutlineDelete
                   onClick={() => handleDeleteClick(item.id)}
                   className="cursor-pointer text-red-600 hover:text-red-800"

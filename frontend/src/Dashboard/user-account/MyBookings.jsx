@@ -11,7 +11,8 @@ import { toast } from 'react-toastify'; // Toast notifications
 const MyBookings = () => {
   const { user } = useContext(authContext); // Get authenticated user
   const { data, loading, error } = useFetchData(`${BASE_URL}/users/bookings/getMyAppointments`);
-  const [appointments, setAppointments] = useState([]); // Store user's bookings
+  const [appointments, setAppointments] = useState([]);
+  const [sortOrder, setSortOrder] = useState('asc'); // State to track sorting order
 
   // Extract bookings and map doctor names when the data changes
   useEffect(() => {
@@ -21,7 +22,18 @@ const MyBookings = () => {
     }
   }, [data, user]);
 
-  // Handle changing the user_id to 0 instead of deleting the booking
+  // Toggle sorting order between ascending and descending
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+  };
+
+  // Sort appointments by date
+  const sortedAppointments = [...appointments].sort((a, b) => {
+    const dateA = new Date(a.appointment_date);
+    const dateB = new Date(b.appointment_date);
+    return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+
   const handleDelete = async (id) => {
     const appointment = appointments.find((item) => item.id === id);
 
@@ -38,7 +50,7 @@ const MyBookings = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          user_id: 0, // Reset user_id to indicate cancellation
+          user_id: 0,
           appointment_date: appointment.appointment_date,
           ticket_price: appointment.ticket_price,
           start_time: appointment.start_time,
@@ -76,16 +88,21 @@ const MyBookings = () => {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
             <th className="px-2 py-2">Doctor</th>
-            <th className="px-2 py-2">Date</th>
+            <th 
+              className="px-2 py-2 cursor-pointer" 
+              onClick={toggleSortOrder}
+            >
+              Date {sortOrder === 'asc' ? '↑' : '↓'}
+            </th>
             <th className="px-2 py-2">Start Time</th>
             <th className="px-2 py-2">End Time</th>
             <th className="px-2 py-2">Price</th>
             <th className="px-2 py-2">Actions</th>
-            <th className="px-2 py-2">Video Call</th> {/* New column for video call */}
+            <th className="px-2 py-2">Video Call</th>
           </tr>
         </thead>
         <tbody>
-          {appointments.map((appointment) => {
+          {sortedAppointments.map((appointment) => {
             const doctor = data.doctors.find((doc) => doc.id === appointment.doctor_id);
             return (
               <tr key={appointment.id}>
