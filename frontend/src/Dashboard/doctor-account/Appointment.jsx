@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
+import { FaVideo } from "react-icons/fa"; // Import video icon
 import { BASE_URL, token } from "../../config";
 import "react-datepicker/dist/react-datepicker.css";
-import { toast } from "react-toastify"; // For notifications
+import { toast } from "react-toastify";
 
 const Appointment = ({ appointments, setAppointments }) => {
     const [editMode, setEditMode] = useState(null);
@@ -22,10 +23,7 @@ const Appointment = ({ appointments, setAppointments }) => {
     };
 
     const handleInputChange = (e, field) => {
-        setEditedAppointment({
-            ...editedAppointment,
-            [field]: e.target.value,
-        });
+        setEditedAppointment({ ...editedAppointment, [field]: e.target.value });
     };
 
     const handleSaveClick = async () => {
@@ -66,9 +64,7 @@ const Appointment = ({ appointments, setAppointments }) => {
             try {
                 const res = await fetch(`${BASE_URL}/bookings/${id}`, {
                     method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
                 if (res.ok) {
@@ -84,30 +80,30 @@ const Appointment = ({ appointments, setAppointments }) => {
         }
     };
 
+    const getVideoRoomUrl = (id, doctorId, userId) => 
+        `https://careplus-prediagnosis.netlify.app/index.html?room=${id}${doctorId}${userId}`;
+
     return (
         <div className="max-w-[900px] mx-auto overflow-x-auto">
             <table className="min-w-full text-left text-sm text-gray-500">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
-                        <th scope="col" className="px-2 py-2">Name</th>
-                        <th scope="col" className="px-2 py-2">Email</th>
-                        <th scope="col" className="px-2 py-2">Gender</th>
-                        <th scope="col" className="px-2 py-2">Payment</th>
-                        <th scope="col" className="px-2 py-2 w-16">Price</th>
-                        <th scope="col" className="px-2 py-2 w-24">Appointment Date</th>
-                        <th scope="col" className="px-2 py-2 w-16">Start Time</th>
-                        <th scope="col" className="px-2 py-2 w-16">End Time</th>
-                        <th scope="col" className="px-2 py-2">Actions</th>
+                        <th className="px-2 py-2">Name</th>
+                        <th className="px-2 py-2">Email</th>
+                        <th className="px-2 py-2">Gender</th>
+                        <th className="px-2 py-2">Payment</th>
+                        <th className="px-2 py-2">Price</th>
+                        <th className="px-2 py-2">Appointment Date</th>
+                        <th className="px-2 py-2">Start Time</th>
+                        <th className="px-2 py-2">End Time</th>
+                        <th className="px-2 py-2">Actions</th>
+                        <th className="px-2 py-2">Video Call</th> {/* New Video Call Column */}
                     </tr>
                 </thead>
                 <tbody>
                     {filteredAppointments.map((item) => (
                         <tr key={item.id}>
-                            <th scope="row" className="flex items-center px-2 py-2 text-gray-900 whitespace-nowrap">
-                                <div className="pl-2">
-                                    <div className="text-base font-semibold">{item.user_name || 'N/A'}</div>
-                                </div>
-                            </th>
+                            <td className="px-2 py-2">{item.user_name || 'N/A'}</td>
                             <td className="px-2 py-2">{item.user_email || 'N/A'}</td>
                             <td className="px-2 py-2">{item.user_gender || 'N/A'}</td>
                             <td className="px-2 py-2">
@@ -123,69 +119,18 @@ const Appointment = ({ appointments, setAppointments }) => {
                                     </div>
                                 )}
                             </td>
-                            <td className="px-2 py-2">
-                                {editMode === item.id ? (
-                                    <input
-                                        type="number"
-                                        className="w-full"
-                                        value={editedAppointment.ticket_price || ''}
-                                        onChange={(e) => handleInputChange(e, 'ticket_price')}
-                                    />
-                                ) : (
-                                    item.ticket_price || 'N/A'
-                                )}
-                            </td>
-                            <td className="px-2 py-2">
-                                {editMode === item.id ? (
-                                    <input
-                                        type="date"
-                                        className="w-full"
-                                        value={editedAppointment.appointment_date || ''}
-                                        onChange={(e) => handleInputChange(e, 'appointment_date')}
-                                    />
-                                ) : (
-                                    item.appointment_date ? item.appointment_date.split(' ')[0] : 'N/A'
-                                )}
-                            </td>
-                            <td className="px-2 py-2">
-                                {editMode === item.id ? (
-                                    <input
-                                        type="time"
-                                        className="w-full"
-                                        value={editedAppointment.start_time || ''}
-                                        onChange={(e) => handleInputChange(e, 'start_time')}
-                                    />
-                                ) : (
-                                    item.start_time || 'N/A'
-                                )}
-                            </td>
-                            <td className="px-2 py-2">
-                                {editMode === item.id ? (
-                                    <input
-                                        type="time"
-                                        className="w-full"
-                                        value={editedAppointment.end_time || ''}
-                                        onChange={(e) => handleInputChange(e, 'end_time')}
-                                    />
-                                ) : (
-                                    item.end_time || 'N/A'
-                                )}
-                            </td>
+                            <td className="px-2 py-2">{item.ticket_price || 'N/A'}</td>
+                            <td className="px-2 py-2">{item.appointment_date?.split(' ')[0] || 'N/A'}</td>
+                            <td className="px-2 py-2">{item.start_time || 'N/A'}</td>
+                            <td className="px-2 py-2">{item.end_time || 'N/A'}</td>
                             <td className="px-2 py-2 flex space-x-2">
-                                {editMode === item.id ? (
-                                    <button onClick={handleSaveClick} className="text-green-600">
-                                        Save
-                                    </button>
-                                ) : (
-                                    <AiOutlineEdit
-                                        onClick={() => handleEditClick(item)}
-                                        className="cursor-pointer text-blue-600"
-                                    />
-                                )}
-                                <AiOutlineDelete
-                                    onClick={() => handleDeleteClick(item.id)}
-                                    className="cursor-pointer text-red-600 hover:text-red-800"
-                                />
+                                <AiOutlineEdit onClick={() => handleEditClick(item)} className="cursor-pointer text-blue-600" />
+                                <AiOutlineDelete onClick={() => handleDeleteClick(item.id)} className="cursor-pointer text-red-600 hover:text-red-800" />
+                            </td>
+                            <td className="px-2 py-2">
+                                <a href={getVideoRoomUrl(item.id, item.doctor_id, item.user_id)} target="_blank" rel="noopener noreferrer">
+                                    <FaVideo className="cursor-pointer text-green-600 hover:text-green-800" />
+                                </a>
                             </td>
                         </tr>
                     ))}

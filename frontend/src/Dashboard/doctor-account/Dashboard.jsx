@@ -62,15 +62,15 @@ const Dashboard = () => {
 
   return (
     <section>
-      <div className="max-w-[1170px] px-1 mx-auto">
+      <div className="max-w-[1350px] px-1 mx-auto">
         {loading && !error && <Loading />}
 
         {error && !loading && <Error errMessage={error} />}
 
         {!loading && !error && (
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-4 gap-10">
             <Tabs tab={tab} setTab={setTab} />
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               {doctor.isApproved === "pending" && (
                 <div className="flex p-4 mb-4 text-yellow-800 bg-yellow-50 rounded-lg">
                   <svg

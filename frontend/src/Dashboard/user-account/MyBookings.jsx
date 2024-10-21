@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
+import { FaVideo } from 'react-icons/fa'; // Import video icon
 import { BASE_URL, token } from '../../config';
 import useFetchData from '../../hooks/useFetchData';
 import Loading from '../../components/Loader/Loading';
 import Error from '../../components/Error/Error';
 import { authContext } from '../../context/AuthContext';
-import { toast } from 'react-toastify'; // Toast notifications
+import { toast } from 'react-toastify';
 
 const MyBookings = () => {
-  const { user } = useContext(authContext); // Get authenticated user
+  const { user } = useContext(authContext);
   const { data, loading, error } = useFetchData(`${BASE_URL}/users/bookings/getMyAppointments`);
-  const [appointments, setAppointments] = useState([]); // Store user's bookings
+  const [appointments, setAppointments] = useState([]);
 
-  // Extract bookings and map doctor names when the data changes
   useEffect(() => {
     if (data && data.bookings) {
       const userBookings = data.bookings.filter((item) => item.user_id === user?.id);
@@ -20,39 +20,25 @@ const MyBookings = () => {
     }
   }, [data, user]);
 
-  // Handle changing the user_id to 0 instead of deleting the booking
   const handleDelete = async (id) => {
     const appointment = appointments.find((item) => item.id === id);
-  
-    // Ensure the appointment exists before proceeding
     if (!appointment) {
       toast.error('Appointment not found.');
       return;
     }
-  
+
     try {
       const res = await fetch(`${BASE_URL}/bookings/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          user_id: 0, // Reset the user_id to indicate deletion
-          appointment_date: appointment.appointment_date,
-          ticket_price: appointment.ticket_price,
-          start_time: appointment.start_time,
-          end_time: appointment.end_time,
-        }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ user_id: 0, ...appointment }),
       });
-  
-      const result = await res.json();
-      console.log('Response:', result);
-  
+
       if (res.ok) {
         toast.success('Booking removed successfully!');
         setAppointments((prev) => prev.filter((item) => item.id !== id));
       } else {
+        const result = await res.json();
         toast.error(result.message || 'Failed to remove the booking.');
       }
     } catch (error) {
@@ -60,8 +46,9 @@ const MyBookings = () => {
       toast.error('An error occurred while removing the booking.');
     }
   };
-  
-  
+
+  const getVideoRoomUrl = (id, doctorId, userId) => 
+    `https://careplus-prediagnosis.netlify.app/index.html?room=${id}${doctorId}${userId}`;
 
   if (loading) return <Loading />;
   if (error) return <Error errMessage={error} />;
@@ -77,6 +64,7 @@ const MyBookings = () => {
             <th className="px-2 py-2">End Time</th>
             <th className="px-2 py-2">Price</th>
             <th className="px-2 py-2">Actions</th>
+            <th className="px-2 py-2">Video Call</th>
           </tr>
         </thead>
         <tbody>
@@ -95,17 +83,16 @@ const MyBookings = () => {
                     className="cursor-pointer text-red-600 hover:text-red-800"
                   />
                 </td>
+                <td className="px-2 py-2">
+                  <a href={getVideoRoomUrl(appointment.id, appointment.doctor_id, appointment.user_id)} target="_blank" rel="noopener noreferrer">
+                    <FaVideo className="cursor-pointer text-green-600 hover:text-green-800" />
+                  </a>
+                </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-
-      {appointments.length === 0 && (
-        <h2 className="mt-5 text-center text-[20px] font-semibold text-primaryColor">
-          You have no bookings yet.
-        </h2>
-      )}
     </div>
   );
 };
