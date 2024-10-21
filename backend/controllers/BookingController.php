@@ -40,7 +40,7 @@ class BookingController
             // Loop through each time slot and insert it
             foreach ($timeSlots as $slot) {
                 $userId = !empty($slot['user_id']) ? $slot['user_id'] : 0;  // Use default value 0 if user_id is null
-                
+
                 // Bind parameters
                 $stmt->bindParam(':doctor_id', $doctorId);
                 $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);  // Always pass an integer, even if 0
@@ -50,7 +50,7 @@ class BookingController
                 $stmt->bindParam(':end_time', $slot['endingTime']);
                 $stmt->bindValue(':status', 'pending');
                 $stmt->bindValue(':is_paid', 0);
-                
+
                 // Execute the query for each time slot
                 if ($stmt->execute()) {
                     $successMessages[] = "Time slot for " . $slot['date'] . " successfully added.";
@@ -77,10 +77,10 @@ class BookingController
 
     // Function to fetch all bookings by doctor ID with user info
     public function getBookingsWithUserInfo($doctorId)
-{
-    try {
-        // Use LEFT JOIN to include bookings with user_id = 0 or without matching users
-        $query = "
+    {
+        try {
+            // Use LEFT JOIN to include bookings with user_id = 0 or without matching users
+            $query = "
         SELECT 
             bookings.*, 
             users.name AS user_name, 
@@ -90,38 +90,38 @@ class BookingController
         LEFT JOIN users ON bookings.user_id = users.id
         WHERE bookings.doctor_id = :doctor_id";
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':doctor_id', $doctorId, PDO::PARAM_INT);
-        $stmt->execute();
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':doctor_id', $doctorId, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Return the result as JSON
-        echo json_encode([
-            'success' => true,
-            'data' => $bookings
-        ]);
-    } catch (PDOException $e) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ]);
+            // Return the result as JSON
+            echo json_encode([
+                'success' => true,
+                'data' => $bookings
+            ]);
+        } catch (PDOException $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
     }
-}
 
 
     // New function to update booking details
     public function updateBooking($id)
     {
         $data = json_decode(file_get_contents('php://input'), true);
-    
+
         // Log the received data
         error_log('Received data: ' . json_encode($data));
-    
+
         if (
-            !isset($data['appointment_date']) || 
-            !isset($data['ticket_price']) || 
-            !isset($data['start_time']) || 
+            !isset($data['appointment_date']) ||
+            !isset($data['ticket_price']) ||
+            !isset($data['start_time']) ||
             !isset($data['end_time'])
         ) {
             echo json_encode([
@@ -130,7 +130,7 @@ class BookingController
             ]);
             return;
         }
-    
+
         try {
             $query = "UPDATE bookings SET 
                         user_id = :user_id,
@@ -139,24 +139,24 @@ class BookingController
                         start_time = :start_time, 
                         end_time = :end_time 
                       WHERE id = :id";
-    
+
             $stmt = $this->conn->prepare($query);
-    
+
             // Log to verify data types and values
             error_log('User ID: ' . var_export($data['user_id'], true));
-    
+
             if (array_key_exists('user_id', $data) && $data['user_id'] === null) {
                 $stmt->bindValue(':user_id', null, PDO::PARAM_NULL);
             } else {
                 $stmt->bindValue(':user_id', $data['user_id'], PDO::PARAM_INT);
             }
-    
+
             $stmt->bindParam(':appointment_date', $data['appointment_date']);
             $stmt->bindParam(':ticket_price', $data['ticket_price']);
             $stmt->bindParam(':start_time', $data['start_time']);
             $stmt->bindParam(':end_time', $data['end_time']);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    
+
             if ($stmt->execute()) {
                 echo json_encode(['success' => true, 'message' => 'Booking updated successfully.']);
             } else {
@@ -166,8 +166,31 @@ class BookingController
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
-    
 
+    public function deleteBooking($id)
+    {
+        try {
+            // Prepare the SQL query to delete the booking by ID
+            $query = "DELETE FROM bookings WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
-
+            if ($stmt->execute()) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Booking deleted successfully.'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Failed to delete booking.'
+                ]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
 }

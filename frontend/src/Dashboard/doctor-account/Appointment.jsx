@@ -63,27 +63,36 @@ const Appointment = ({ appointments, setAppointments }) => {
   };
 
   const handleDeleteClick = async (id) => {
-    if (window.confirm("Are you sure you want to delete this booking?")) {
-      try {
-        const res = await fetch(`${BASE_URL}/bookings/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (res.ok) {
-          toast.success("Booking deleted successfully");
-          setAppointments((prev) => prev.filter((item) => item.id !== id));
-        } else {
-          toast.error("Failed to delete booking");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        toast.error("An error occurred while deleting the booking");
+    const confirmation = window.confirm(
+      "Are you sure you want to delete this booking? This action cannot be undone."
+    );
+  
+    if (!confirmation) return; // If user cancels, exit early
+  
+    try {
+      const response = await fetch(`${BASE_URL}/bookings/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        // Update state to remove the deleted appointment
+        setAppointments((prev) => prev.filter((appointment) => appointment.id !== id));
+        toast.success("Booking deleted successfully!");
+      } else {
+        // If server responds with an error message
+        toast.error(result.message || "Failed to delete booking.");
       }
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      toast.error("An error occurred while deleting the booking. Please try again.");
     }
   };
+  
 
   const handleVideoCallClick = (appointment) => {
     const roomId = `${appointment.id}${appointment.doctor_id}${appointment.user_id}`;

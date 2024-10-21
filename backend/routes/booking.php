@@ -113,6 +113,20 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/(\d+)/', $url, $
             $bookingController->updateBooking($bookingId);
             break;
 
+        case 'DELETE':
+            error_log("Processing DELETE request for booking ID: $bookingId");
+
+            $requestHeaders = getallheaders();
+            $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
+            // Allow both patients and doctors to delete bookings
+            $allowedRoles = ['patient', 'doctor'];
+            $tokenMiddleware->restrict($allowedRoles, $requestHeaders, $authResult);
+
+            // Call the deleteBooking method
+            $bookingController->deleteBooking($bookingId);
+            break;
+
         default:
             http_response_code(405); // Method not allowed
             echo json_encode(['success' => false, 'message' => 'Invalid request method for bookings']);
@@ -120,6 +134,9 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/(\d+)/', $url, $
     }
     exit();  // Add exit to prevent further execution
 }
+
+
+
 
 
 
