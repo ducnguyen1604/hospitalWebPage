@@ -46,7 +46,7 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 py-16">
+    <footer className="hero__section py-6">
       <div className="container mx-auto">
         <div className="flex justify-between flex-col md:flex-row flex-wrap gap-[30px]">
           <div>

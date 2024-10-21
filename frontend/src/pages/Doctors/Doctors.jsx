@@ -119,7 +119,7 @@ const Doctors = () => {
       </section>
 
       {/* Testimonials Carousel Section */}
-      <section className="py-16 bg-[#deeef8] relative">
+      <section className="py-16 bg-[#f3f4f6] relative">
         <div className="container">
           <div className="xl:w-[650px] mx-auto text-center mb-12">
             <h2 className="heading">What Our Patients Say</h2>
