@@ -1,7 +1,7 @@
 # IE4727 Project 
 # CarePlus - The Smart Healthcare Platform 🌐  with AI-Powered Assistant 🤖  and Virtual Consultations 💬
 
-CarePlus is an all-in-one healthcare platform designed to improve patient-doctor interactions, offering features like doctor profile browsing, appointment scheduling, and a built-in video call feature for virtual consultations. With a chatbot powered by Generative AI, it provides pre-diagnosis information and personalized doctor recommendations for a seamless healthcare experience.
+CarePlus is an all-in-one healthcare platform designed to improve patient-doctor interactions, offering features such as doctor profile browsing, interactive map to find clinics, appointment scheduling, and a built-in video call feature for virtual consultations. With a chatbot powered by Generative AI, it provides pre-diagnosis information and personalized doctor recommendations for a seamless healthcare experience.
 
 Experience seamless healthcare with CarePlus, where AI-powered assistants provide pre-diagnosis insights and personalized doctor recommendations, while virtual consultations bring doctors and patients together effortlessly!
 
