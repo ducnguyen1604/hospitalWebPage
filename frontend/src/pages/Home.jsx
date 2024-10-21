@@ -117,7 +117,7 @@ const Home = () => {
                             {repeatedCards.map((card, index) => (
                                 <Link
                                     key={index}
-                                    to="/doctors"
+                                    to="/services"
                                     className="flex-shrink-0 w-[400px] mb-2"
                                     style={{ scrollSnapAlign: "start" }}
                                 >
