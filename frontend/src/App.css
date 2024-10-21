@@ -22,6 +22,18 @@ body {
   background: white;
 }
 
+/* Hide scrollbar for Webkit-based browsers */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for other browsers */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+
 @media only screen and (max-width: 800px) {
   .navigation {
     width: 100%;

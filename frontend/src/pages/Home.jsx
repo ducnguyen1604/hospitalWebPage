@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useRef, useEffect, useState } from "react";
 import { Link } from 'react-router-dom'
 import { BsArrowRight } from 'react-icons/bs'
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 
 import About from '../components/About/About'
-import ServicesList from '../components/Services/ServicesList'
-import DoctorList from '../components/Doctor/DoctorList'
 
 import heroImg01 from '../assets/images/hero-img01.jpeg'
 import heroImg02 from '../assets/images/hero-img02.png'
@@ -21,6 +20,25 @@ import Faqlist from '../components/FAQ/Faqlist'
 
 
 const Home = () => {
+    const scrollRef = useRef(null); // Reference for the carousel
+    const [cards, setCards] = useState([
+        { id: 1, title: "Find a Doctor", icon: icon01, description: "Browse our directory of experienced doctors and specialists. Choose the one that best fits your needs and get expert medical advice." },
+        { id: 2, title: "Find a Center", icon: icon02, description: "Locate the nearest healthcare center or clinic. We have multiple locations to serve you better, ensuring prompt and efficient care." },
+        { id: 3, title: "Book an Appointment", icon: icon03, description: "Schedule an appointment at your convenience. We offer online booking for easy access to consultations and follow-ups." },
+       
+    ]);
+
+    // Duplicate cards for smooth infinite scroll
+    const repeatedCards = [...cards, ...cards];
+
+    const scrollLeft = () => {
+        scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    };
+
+    const scrollRight = () => {
+        scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    };
+    
     return <>
         <>
             <section className='hero__section pt-[60px] 2xl:h-[800px]'>
@@ -85,58 +103,52 @@ const Home = () => {
                             Providing the Best Medical
                         </h2>
                         <p className="text-lg text-gray-600">
-                            Experience top-tier healthcare with our trusted professionals. We are committed to your health and well-being with personalized care and the latest medical technology.
+                            Experience top-tier healthcare with our trusted professionals.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum. Vivamus nisl leo, condimentum ut mauris quis, venenatis feugiat eros. Sed et erat fringilla.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-12">
-                        {/* Card 1 */}
-                        <Link to="/doctors" className="group">
-                            <div className="p-6 bg-white shadow-md rounded-lg hover:shadow-xl transition-shadow">
-                                <div className="flex items-center mb-4">
-                                    <img src={icon01} alt="Find a Doctor" className="h-12 w-12 mr-4" />
-                                    <h3 className="text-xl font-semibold text-headingColor group-hover:text-primaryColor">
-                                        Find a Doctor
-                                    </h3>
-                                </div>
-                                <p className="text-gray-600 leading-7">
-                                    Browse our directory of experienced doctors and specialists. Choose the one that best fits your needs and get expert medical advice.
-                                </p>
-                            </div>
-                        </Link>
+                    <div className="relative">
+                        {/* Carousel Container */}
+                        <div
+                            ref={scrollRef}
+                            className="ml-[60px] flex gap-10 overflow-x-auto scroll-smooth scrollbar-hide"
+                            style={{ scrollSnapType: "x mandatory" }}
+                        >
+                            {repeatedCards.map((card, index) => (
+                                <Link
+                                    key={index}
+                                    to="/doctors"
+                                    className="flex-shrink-0 w-[400px] mb-2"
+                                    style={{ scrollSnapAlign: "start" }}
+                                >
+                                    <div className="p-6 bg-white shadow-md rounded-lg hover:shadow-xl transition-shadow flex flex-col items-center text-center">
+                                        <h3 className="text-xl font-semibold text-headingColor mb-4">
+                                            {card.title}
+                                        </h3>
+                                        <img src={card.icon} alt={card.title} className="mb-4" />
+                                        <p className="text-gray-600 leading-7">{card.description}</p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
 
-                        {/* Card 2 */}
-                        <Link to="/doctors" className="group">
-                            <div className="p-6 bg-white shadow-md rounded-lg hover:shadow-xl transition-shadow">
-                                <div className="flex items-center mb-4">
-                                    <img src={icon02} alt="Find a Center" className="h-12 w-12 mr-4" />
-                                    <h3 className="text-xl font-semibold text-headingColor group-hover:text-primaryColor">
-                                        Find a Center
-                                    </h3>
-                                </div>
-                                <p className="text-gray-600 leading-7">
-                                    Locate the nearest healthcare center or clinic. We have multiple locations to serve you better, ensuring prompt and efficient care.
-                                </p>
-                            </div>
-                        </Link>
-
-                        {/* Card 3 */}
-                        <Link to="/doctors" className="group">
-                            <div className="p-6 bg-white shadow-md rounded-lg hover:shadow-xl transition-shadow">
-                                <div className="flex items-center mb-4">
-                                    <img src={icon03} alt="Book an Appointment" className="h-12 w-12 mr-4" />
-                                    <h3 className="text-xl font-semibold text-headingColor group-hover:text-primaryColor">
-                                        Book an Appointment
-                                    </h3>
-                                </div>
-                                <p className="text-gray-600 leading-7">
-                                    Schedule an appointment at your convenience. We offer online booking for easy access to consultations and follow-ups.
-                                </p>
-                            </div>
-                        </Link>
+                        {/* Navigation Buttons */}
+                        <button
+                            onClick={scrollLeft}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:shadow-lg transition"
+                        >
+                            <AiOutlineLeft size={24} />
+                        </button>
+                        <button
+                            onClick={scrollRight}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:shadow-lg transition"
+                        >
+                            <AiOutlineRight size={24} />
+                        </button>
                     </div>
                 </div>
             </section>
+
 
 
             {/* <!-- About --> */}
@@ -265,21 +277,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* <!-- Great Doctor --> */}
-            <section>
-                <div className='container'>
-                    <div className='xl:w-[450px] mx-auto'>
-                        <h2 className='heading text-center'>
-                            Our Great Doctor
-                        </h2>
-                        <p className='text__para text-center'>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed accumsan ipsum.
-                        </p>
-                    </div>
-                    <DoctorList />
-                </div>
-            </section>
-
+           
             {/* <!-- FAQ --> */}
             <section>
                 <div className='container'>
