@@ -14,6 +14,7 @@ const SidePanel = () => {
   const [loading, setLoading] = useState(true); // Manage loading state
   const [error, setError] = useState(null); // Manage error state
   const [selectedSlot, setSelectedSlot] = useState(null); // Track selected slot
+  const [isModelOpen, setIsModalOpen] = useState(false);
 
   // Fetch time slots from the backend
   const fetchSlots = async () => {
@@ -53,7 +54,7 @@ const SidePanel = () => {
   };
 
   const handleBooking = async () => {
-    console.log("User ID:", user.id, "Selected Slot:", selectedSlot); // Debug log
+    //console.log("User ID:", user.id, "Selected Slot:", selectedSlot);
 
     if (!user) {
       toast.warning("Please log in to book a time slot.");

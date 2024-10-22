@@ -111,18 +111,80 @@ class BookingController
 
 
     // New function to update booking details
+    // public function updateBooking($id)
+    // {
+    //     $data = json_decode(file_get_contents('php://input'), true);
+    //     error_log('Received data: ' . json_encode($data));
+    //     error_log('Received PUT request for booking ID: ' . $id);
+
+    //     if (
+    //         !isset($data['appointment_date']) ||
+    //         !isset($data['ticket_price']) ||
+    //         !isset($data['start_time']) ||
+    //         !isset($data['end_time'])
+    //     ) {
+    //         echo json_encode([
+    //             'success' => false,
+    //             'message' => 'Missing required fields.'
+    //         ]);
+    //         return;
+    //     }
+    //     //echo json_encode(['debug' => 'Received data', 'data' => $data]);
+
+    //     try {
+    //         $query = "UPDATE bookings SET 
+    //         user_id = :user_id,
+    //         appointment_date = :appointment_date, 
+    //         ticket_price = :ticket_price, 
+    //         start_time = :start_time, 
+    //         end_time = :end_time, 
+    //         status = :status, 
+    //         is_paid = :is_paid 
+    //       WHERE id = :id";
+
+    //         $stmt = $this->conn->prepare($query);
+
+    //         // Log to verify data types and values
+    //         error_log('User ID: ' . var_export($data['user_id'], true));
+
+    //         if (array_key_exists('user_id', $data) && $data['user_id'] === null) {
+    //             $stmt->bindValue(':user_id', null, PDO::PARAM_NULL);
+    //         } else {
+    //             $stmt->bindValue(':user_id', $data['user_id'], PDO::PARAM_INT);
+    //         }
+
+    //         $stmt->bindValue(':appointment_date', $data['appointment_date']);
+    //         $stmt->bindValue(':ticket_price', $data['ticket_price'], PDO::PARAM_STR);
+    //         $stmt->bindValue(':start_time', $data['start_time']);
+    //         $stmt->bindValue(':end_time', $data['end_time']);
+    //         $stmt->bindValue(':status', $data['status'], PDO::PARAM_STR);
+    //         $stmt->bindValue(':is_paid', (int) $data['is_paid'], PDO::PARAM_INT);
+    //         $stmt->bindValue(':id', (int) $id, PDO::PARAM_INT);
+
+    //         if ($stmt->execute()) {
+    //             echo json_encode(['success' => true, 'message' => 'Booking updated successfully.']);
+    //         } else {
+    //             echo json_encode(['success' => false, 'message' => 'Failed to update booking.']);
+    //         }
+    //     } catch (PDOException $e) {
+    //         echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+    //     }
+    // }
     public function updateBooking($id)
     {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        // Log the received data
+        // Log the received data for debugging
         error_log('Received data: ' . json_encode($data));
+        error_log('Received PUT request for booking ID: ' . $id);
 
         if (
             !isset($data['appointment_date']) ||
             !isset($data['ticket_price']) ||
             !isset($data['start_time']) ||
-            !isset($data['end_time'])
+            !isset($data['end_time']) ||
+            !isset($data['is_paid']) ||
+            !isset($data['status'])
         ) {
             echo json_encode([
                 'success' => false,
@@ -132,30 +194,33 @@ class BookingController
         }
 
         try {
+            // Prepare the SQL query to update booking, including is_paid and status
             $query = "UPDATE bookings SET 
                         user_id = :user_id,
                         appointment_date = :appointment_date, 
                         ticket_price = :ticket_price, 
                         start_time = :start_time, 
-                        end_time = :end_time 
+                        end_time = :end_time, 
+                        is_paid = :is_paid, 
+                        status = :status 
                       WHERE id = :id";
 
             $stmt = $this->conn->prepare($query);
 
-            // Log to verify data types and values
-            error_log('User ID: ' . var_export($data['user_id'], true));
-
+            // Bind parameters for the query
             if (array_key_exists('user_id', $data) && $data['user_id'] === null) {
                 $stmt->bindValue(':user_id', null, PDO::PARAM_NULL);
             } else {
                 $stmt->bindValue(':user_id', $data['user_id'], PDO::PARAM_INT);
             }
 
-            $stmt->bindParam(':appointment_date', $data['appointment_date']);
-            $stmt->bindParam(':ticket_price', $data['ticket_price']);
-            $stmt->bindParam(':start_time', $data['start_time']);
-            $stmt->bindParam(':end_time', $data['end_time']);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':appointment_date', $data['appointment_date']);
+            $stmt->bindValue(':ticket_price', $data['ticket_price'], PDO::PARAM_STR);
+            $stmt->bindValue(':start_time', $data['start_time']);
+            $stmt->bindValue(':end_time', $data['end_time']);
+            $stmt->bindValue(':is_paid', (int)$data['is_paid'], PDO::PARAM_INT);
+            $stmt->bindValue(':status', $data['status'], PDO::PARAM_STR);
+            $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
 
             if ($stmt->execute()) {
                 echo json_encode(['success' => true, 'message' => 'Booking updated successfully.']);
@@ -166,6 +231,8 @@ class BookingController
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
+
+
 
     public function deleteBooking($id)
     {

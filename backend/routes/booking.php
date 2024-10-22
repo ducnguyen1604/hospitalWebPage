@@ -102,8 +102,11 @@ if (preg_match('/\/hospitalWebPage\/backend\/api\/v1\/bookings\/(\d+)/', $url, $
     $bookingId = $matches[1];
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'PUT':
+            error_log("URL matched with ID: $bookingId");
+
             $requestHeaders = getallheaders();
             $authResult = $tokenMiddleware->authenticate($requestHeaders);
+
 
             // Allow both patients and doctors to update bookings
             $allowedRoles = ['patient', 'doctor'];
