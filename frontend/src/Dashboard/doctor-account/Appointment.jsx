@@ -10,7 +10,9 @@ const Appointment = ({ appointments, setAppointments }) => {
   const [editedAppointment, setEditedAppointment] = useState({});
   const [sortOrder, setSortOrder] = useState("asc");
 
-  const filteredAppointments = appointments.filter((item) => item.user_id !== 0);
+  const filteredAppointments = appointments.filter(
+    (item) => item.user_id !== 0
+  );
 
   const sortedAppointments = [...filteredAppointments].sort((a, b) => {
     const dateA = new Date(a.appointment_date);
@@ -18,6 +20,7 @@ const Appointment = ({ appointments, setAppointments }) => {
     return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
   });
 
+  //   console.log(sortedAppointments);
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
@@ -49,7 +52,9 @@ const Appointment = ({ appointments, setAppointments }) => {
         toast.success("Appointment updated successfully");
         setAppointments((prev) =>
           prev.map((item) =>
-            item.id === editedAppointment.id ? { ...item, ...editedAppointment } : item
+            item.id === editedAppointment.id
+              ? { ...item, ...editedAppointment }
+              : item
           )
         );
         setEditMode(null);
@@ -66,9 +71,9 @@ const Appointment = ({ appointments, setAppointments }) => {
     const confirmation = window.confirm(
       "Are you sure you want to delete this booking? This action cannot be undone."
     );
-  
+
     if (!confirmation) return; // If user cancels, exit early
-  
+
     try {
       const response = await fetch(`${BASE_URL}/bookings/${id}`, {
         method: "DELETE",
@@ -76,12 +81,14 @@ const Appointment = ({ appointments, setAppointments }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       const result = await response.json();
-  
+
       if (response.ok) {
         // Update state to remove the deleted appointment
-        setAppointments((prev) => prev.filter((appointment) => appointment.id !== id));
+        setAppointments((prev) =>
+          prev.filter((appointment) => appointment.id !== id)
+        );
         toast.success("Booking deleted successfully!");
       } else {
         // If server responds with an error message
@@ -89,10 +96,11 @@ const Appointment = ({ appointments, setAppointments }) => {
       }
     } catch (error) {
       console.error("Error deleting booking:", error);
-      toast.error("An error occurred while deleting the booking. Please try again.");
+      toast.error(
+        "An error occurred while deleting the booking. Please try again."
+      );
     }
   };
-  
 
   const handleVideoCallClick = (appointment) => {
     const roomId = `${appointment.id}${appointment.doctor_id}${appointment.user_id}`;
@@ -129,7 +137,7 @@ const Appointment = ({ appointments, setAppointments }) => {
               <td className="px-2 py-2">{item.user_email || "N/A"}</td>
               <td className="px-2 py-2">{item.user_gender || "N/A"}</td>
               <td className="px-2 py-2">
-                {item.is_paid ? (
+                {String(item.is_paid) !== "0" ? (
                   <div className="flex items-center">
                     <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-1"></div>
                     Paid
@@ -191,10 +199,7 @@ const Appointment = ({ appointments, setAppointments }) => {
               </td>
               <td className="px-2 py-2 flex space-x-2">
                 {editMode === item.id ? (
-                  <button
-                    onClick={handleSaveClick}
-                    className="text-green-600"
-                  >
+                  <button onClick={handleSaveClick} className="text-green-600">
                     Save
                   </button>
                 ) : (

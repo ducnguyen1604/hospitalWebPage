@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { authContext } from '../../context/AuthContext'; // Authentication context
-import Loading from '../../components/Loader/Loading';
-import { BASE_URL, token } from '../../config';
+import React, { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { authContext } from "../../context/AuthContext"; // Authentication context
+import Loading from "../../components/Loader/Loading";
+import { BASE_URL, token } from "../../config";
 
 const SidePanel = () => {
   const { doctorId } = useParams(); // Get the doctorId from route params
@@ -22,21 +22,19 @@ const SidePanel = () => {
       const response = await fetch(`${BASE_URL}/bookings/doctors/${doctorId}`);
       const data = await response.json();
 
-      console.log('API Response:', data); // Log the API response
+      console.log("API Response:", data);
 
-      if (!response.ok) throw new Error('Failed to fetch slots');
-
-      // Check if data is an array before applying filter
+      if (!response.ok) throw new Error("Failed to fetch slots");
       if (Array.isArray(data)) {
-        setSlots(data.filter((slot) => slot.user_id === 0)); // Filter available slots
+        setSlots(data.filter((slot) => String(slot.user_id) === "0")); // Filter available slots
       } else if (data.data && Array.isArray(data.data)) {
         // If the API returns an object, and slots are in the "data" field
-        setSlots(data.data.filter((slot) => slot.user_id === 0));
+        setSlots(data.data.filter((slot) => String(slot.user_id) === "0"));
       } else {
-        throw new Error('Invalid data format');
+        throw new Error("Invalid data format");
       }
     } catch (err) {
-      console.error('Error fetching slots:', err);
+      console.error("Error fetching slots:", err);
       setError(err.message);
     } finally {
       setLoading(false); // Set loading to false after fetch completes
@@ -55,16 +53,16 @@ const SidePanel = () => {
   };
 
   const handleBooking = async () => {
-    console.log('User ID:', user.id, 'Selected Slot:', selectedSlot); // Debug log
+    console.log("User ID:", user.id, "Selected Slot:", selectedSlot); // Debug log
 
     if (!user) {
-      toast.warning('Please log in to book a time slot.');
-      navigate('/login');
+      toast.warning("Please log in to book a time slot.");
+      navigate("/login");
       return;
     }
 
-    if (user.role === 'doctor') {
-      toast.error('Doctors cannot book appointments.');
+    if (user.role === "doctor") {
+      toast.error("Doctors cannot book appointments.");
       return;
     }
 
@@ -73,9 +71,9 @@ const SidePanel = () => {
 
       try {
         const res = await fetch(`${BASE_URL}/bookings/${slot.id}`, {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -89,18 +87,18 @@ const SidePanel = () => {
 
         const result = await res.json();
         if (res.ok && result.success) {
-          toast.success('Appointment booked successfully!');
+          toast.success("Appointment booked successfully!");
           setSelectedSlot(null); // Clear selected slot
           fetchSlots(); // Refresh available slots after booking
         } else {
-          toast.error(result.message || 'Failed to book the appointment.');
+          toast.error(result.message || "Failed to book the appointment.");
         }
       } catch (error) {
-        console.error('Error:', error);
-        toast.error('An error occurred while booking the appointment.');
+        console.error("Error:", error);
+        toast.error("An error occurred while booking the appointment.");
       }
     } else {
-      toast.warning('Please select a time slot to book.');
+      toast.warning("Please select a time slot to book.");
     }
   };
 
@@ -110,14 +108,18 @@ const SidePanel = () => {
   return (
     <div className="shadow-panelShadow p-3 lg:p-5 rounded-md">
       <div className="flex items-center justify-between">
-        <p className="text_para mt-0 font-semibold text-headingColor">Ticket Price</p>
+        <p className="text_para mt-0 font-semibold text-headingColor">
+          Ticket Price
+        </p>
         <span className="text-[16px] leading-7 lg:text-[22px] lg:leading-8 text-headingColor font-bold">
           500 SGD
         </span>
       </div>
 
       <div className="mt-[30px]">
-        <p className="text_para mt-0 font-semibold text-headingColor">Available Time Slots:</p>
+        <p className="text_para mt-0 font-semibold text-headingColor">
+          Available Time Slots:
+        </p>
         {slots.length > 0 ? (
           <div className="mt-3 grid gap-2">
             {slots.map((slot) => (
@@ -126,11 +128,13 @@ const SidePanel = () => {
                 onClick={() => handleSlotSelect(slot.id)}
                 className={`px-4 py-2 rounded-full border transition-transform duration-150 active:scale-95 ease-in-out transform ${
                   selectedSlot === slot.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-blue-600 border-blue-600'
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-blue-600 border-blue-600"
                 }`}
               >
-                {`${slot.appointment_date.split(' ')[0]} | ${slot.start_time} - ${slot.end_time}`}
+                {`${slot.appointment_date.split(" ")[0]} | ${
+                  slot.start_time
+                } - ${slot.end_time}`}
               </button>
             ))}
           </div>
@@ -142,7 +146,7 @@ const SidePanel = () => {
       <button
         onClick={handleBooking}
         className={`btn px-2 w-full rounded-md mt-5 transition-transform duration-100 ease-in-out ${
-          selectedSlot ? 'active:bg-blue-700' : 'opacity-50 cursor-not-allowed'
+          selectedSlot ? "active:bg-blue-700" : "opacity-50 cursor-not-allowed"
         }`}
         disabled={!selectedSlot} // Disable booking if no slot is selected
       >
