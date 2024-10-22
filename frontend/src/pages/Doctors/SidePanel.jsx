@@ -83,6 +83,8 @@ const SidePanel = () => {
             ticket_price: slot.ticket_price,
             start_time: slot.start_time,
             end_time: slot.end_time,
+            is_paid: slot.is_paid,
+            status: slot.status
           }),
         });
 
