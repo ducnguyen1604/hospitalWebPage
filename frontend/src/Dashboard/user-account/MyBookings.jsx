@@ -67,6 +67,8 @@ const MyBookings = () => {
           ticket_price: appointment.ticket_price,
           start_time: appointment.start_time,
           end_time: appointment.end_time,
+          is_paid: appointment.is_paid,
+          status: appointment.status
         }),
       });
 
