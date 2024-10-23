@@ -9,9 +9,14 @@ import { authContext } from "../../context/AuthContext";
 import { toast } from "react-toastify"; // Toast notifications
 import Modal from "react-modal"; // Import Modal
 import qrImage from "../../assets/images/qr-payment.jpg";
+import emailjs from 'emailjs-com'; // Import EmailJS
 
 // Initialize Modal to avoid accessibility issues
 Modal.setAppElement("#root");
+
+const YOUR_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const YOUR_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const YOUR_USER_ID = import.meta.env.VITE_EMAILJS_USER_ID;
 
 const MyBookings = () => {
   const { user } = useContext(authContext); // Get authenticated user
@@ -22,6 +27,8 @@ const MyBookings = () => {
   const [sortOrder, setSortOrder] = useState("asc"); // State to track sorting order
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+
+  
 
   // Extract bookings and map doctor names when the data changes
   useEffect(() => {
@@ -96,7 +103,7 @@ const MyBookings = () => {
   /////PAYMENT
 
   const handlePaymentClick = (appointment) => {
-    if (String(appointment.is_paid) === 1) {
+    if (String(appointment.is_paid) === "1") {
       toast.info("This appointment is already paid.");
       return;
     }
@@ -112,8 +119,6 @@ const MyBookings = () => {
         toast.error("Invalid appointment selected.");
         return;
       }
-
-      //console.log("Sending PUT request for booking:", appointment);
 
       // Ensure the appointment ID is correctly included in the URL
       const res = await fetch(`${BASE_URL}/bookings/${appointment.id}`, {
@@ -134,10 +139,8 @@ const MyBookings = () => {
       });
 
       const result = await res.json();
-      //console.log("Payment Response:", result);
-
       if (res.ok) {
-        toast.success("Payment confirmed and appointment approved!");
+        toast.success("Payment confirmed and appointment approved! A confirmation email has been sent to " + user.email);
         setAppointments((prev) =>
           prev.map((item) =>
             item.id === appointment.id
@@ -146,6 +149,7 @@ const MyBookings = () => {
           )
         );
         setIsModalOpen(false);
+        sendConfirmationEmail(user, appointment);
       } else {
         toast.error(result.message || "Failed to confirm payment.");
       }
@@ -153,6 +157,35 @@ const MyBookings = () => {
       console.error("Error confirming payment:", error);
       toast.error("An error occurred while confirming the payment.");
     }
+  };
+
+  const sendConfirmationEmail = (user, appointment) => {
+    const doctorName = data.doctors.find((doc) => doc.id === appointment.doctor_id)?.name || "Doctor";
+
+    // Set up template parameters to match the template
+    const templateParams = {
+      user_name: user.name, // Matches {{user_name}} in the template
+      doctor_name: doctorName, // Matches {{doctor_name}} in the template
+      appointment_date: appointment.appointment_date, // Matches {{appointment_date}} in the template
+      appointment_time: `${appointment.start_time} - ${appointment.end_time}`, // Matches {{appointment_time}} in the template
+      video_call_url: `https://careplus-prediagnosis.netlify.app/index.html?room=${appointment.id}${appointment.doctor_id}${appointment.user_id}`, // Matches {{video_call_url}} in the template
+      reply_to: user.email // Matches {{reply_to}} in the template
+    };
+
+    // Send the email using EmailJS
+    emailjs.send(
+      YOUR_SERVICE_ID,  // Replace with your actual Service ID
+      YOUR_TEMPLATE_ID,  // Replace with your actual Template ID
+      templateParams,
+      YOUR_USER_ID  // Replace with your actual User ID
+    ).then(
+      (response) => {
+        console.log('SUCCESS!', response.status, response.text);
+      },
+      (error) => {
+        console.error('FAILED...', error);
+      }
+    );
   };
 
   const modalStyles = {
