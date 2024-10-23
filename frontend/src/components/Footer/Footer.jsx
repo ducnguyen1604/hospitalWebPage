@@ -25,15 +25,15 @@ const socialLinks = [
 
 const quickLinks01 = [
   { path: '/home', display: 'Home' },
-  { path: "/", display: 'About Us' },
+  { path: "/services", display: 'About Us' },
   { path: '/services', display: 'Services' },
   { path: '/', display: 'Blog' },
 ];
 
 const quickLinks02 = [
   { path: '/doctors', display: 'Find A Doctor' },
-  { path: '/', display: 'Request an Appointment' },
-  { path: '/', display: 'Find a Location' },
+  { path: '/doctors', display: 'Request an Appointment' },
+  { path: '/services', display: 'Find a Location' },
   { path: '/', display: 'Get a Opinion' },
 ];
 
