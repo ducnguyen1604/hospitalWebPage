@@ -10,17 +10,23 @@ const Appointment = ({ appointments, setAppointments }) => {
   const [editedAppointment, setEditedAppointment] = useState({});
   const [sortOrder, setSortOrder] = useState("asc");
 
-  const filteredAppointments = appointments.filter(
-    (item) => item.user_id !== 0
+  const bookedAppointments = appointments.filter((item) => item.user_id !== 0);
+  const unbookedAppointments = appointments.filter(
+    (item) => item.user_id === 0
   );
 
-  const sortedAppointments = [...filteredAppointments].sort((a, b) => {
+  const sortedBookedAppointments = [...bookedAppointments].sort((a, b) => {
     const dateA = new Date(a.appointment_date);
     const dateB = new Date(b.appointment_date);
     return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
   });
 
-  //   console.log(sortedAppointments);
+  const sortedUnbookedAppointments = [...unbookedAppointments].sort((a, b) => {
+    const dateA = new Date(a.appointment_date);
+    const dateB = new Date(b.appointment_date);
+    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+  });
+
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
@@ -110,7 +116,9 @@ const Appointment = ({ appointments, setAppointments }) => {
 
   return (
     <div className="max-w-[900px] mx-auto overflow-x-auto">
-      <table className="min-w-full text-left text-sm text-gray-500">
+      {/* Booked Time Slot Table */}
+      <h2 className="text-xl font-bold mb-4">Booked Time Slot</h2>
+      <table className="min-w-full text-left text-sm text-gray-500 mb-8">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
             <th className="px-2 py-2">Name</th>
@@ -131,7 +139,7 @@ const Appointment = ({ appointments, setAppointments }) => {
           </tr>
         </thead>
         <tbody>
-          {sortedAppointments.map((item) => (
+          {sortedBookedAppointments.map((item) => (
             <tr key={item.id}>
               <td className="px-2 py-2">{item.user_name || "N/A"}</td>
               <td className="px-2 py-2">{item.user_email || "N/A"}</td>
@@ -205,18 +213,102 @@ const Appointment = ({ appointments, setAppointments }) => {
                 ) : (
                   <AiOutlineEdit
                     onClick={() => handleEditClick(item)}
-                    className="cursor-pointer text-blue-600"
+                    className="mt-3 cursor-pointer text-blue-600"
                   />
                 )}
                 <AiOutlineDelete
                   onClick={() => handleDeleteClick(item.id)}
-                  className="cursor-pointer text-red-600 hover:text-red-800"
+                  className="mt-3 cursor-pointer text-red-600 hover:text-red-800"
                 />
               </td>
               <td className="px-2 py-2">
                 <FaVideo
                   onClick={() => handleVideoCallClick(item)}
                   className="cursor-pointer text-green-600 hover:text-green-800"
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Unbooked Time Slot Table */}
+      <h2 className="text-xl font-bold mb-4">Unbooked Time Slot</h2>
+      <table className="max-w-full text-left text-sm text-gray-500">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th className="px-2 py-2 ">Appointment Date</th>
+            <th className="px-2 py-2 ">Start Time</th>
+            <th className="px-2 py-2 ">End Time</th>
+            <th className="px-2 py-2 ">Price</th>
+            <th className="px-2 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedUnbookedAppointments.map((item) => (
+            <tr key={item.id}>
+              <td className="px-2 py-2">
+                {editMode === item.id ? (
+                  <input
+                    type="date"
+                    value={editedAppointment.appointment_date || ""}
+                    onChange={(e) => handleInputChange(e, "appointment_date")}
+                    className="w-full"
+                  />
+                ) : (
+                  item.appointment_date.split(" ")[0] || "N/A"
+                )}
+              </td>
+              <td className="px-2 py-2">
+                {editMode === item.id ? (
+                  <input
+                    type="time"
+                    value={editedAppointment.start_time || ""}
+                    onChange={(e) => handleInputChange(e, "start_time")}
+                    className="w-full"
+                  />
+                ) : (
+                  item.start_time || "N/A"
+                )}
+              </td>
+              <td className="px-2 py-2">
+                {editMode === item.id ? (
+                  <input
+                    type="time"
+                    value={editedAppointment.end_time || ""}
+                    onChange={(e) => handleInputChange(e, "end_time")}
+                    className="w-full"
+                  />
+                ) : (
+                  item.end_time || "N/A"
+                )}
+              </td>
+              <td className="px-2 py-2">
+                {editMode === item.id ? (
+                  <input
+                    type="number"
+                    value={editedAppointment.ticket_price || ""}
+                    onChange={(e) => handleInputChange(e, "ticket_price")}
+                    className="w-full"
+                  />
+                ) : (
+                  item.ticket_price || "N/A"
+                )}
+              </td>
+              <td className="px-2 py-2 flex space-x-2">
+                {editMode === item.id ? (
+                  <button onClick={handleSaveClick} className="text-green-600">
+                    Save
+                  </button>
+                ) : (
+                  <AiOutlineEdit
+                    onClick={() => handleEditClick(item)}
+                    className="mt-1 cursor-pointer text-blue-600"
+                  />
+                )}
+                <AiOutlineDelete
+                  onClick={() => handleDeleteClick(item.id)}
+                  className="mt-1 cursor-pointer text-red-600 hover:text-red-800"
                 />
               </td>
             </tr>
