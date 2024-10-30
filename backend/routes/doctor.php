@@ -37,7 +37,7 @@ switch ($url) {
         // Handle review-related actions
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === '') {
             // Get all reviews for a specific doctor
-            $response = $reviewController->getAllReviews($doctorId);
+            $response = $reviewController->getReviewsByDoctorId($doctorId);
             echo $response;
         } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === '') {
             // Authenticate token for creating a review

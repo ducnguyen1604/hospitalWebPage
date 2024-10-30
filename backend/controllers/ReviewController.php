@@ -15,39 +15,53 @@ class ReviewController
         $this->conn = $database->connect();
     }
 
-    // Function to get all reviews
-    public function getAllReviews()
+    // Function to get reviews by doctor ID
+    public function getReviewsByDoctorId($doctorId)
     {
         try {
-            $query = "SELECT * FROM reviews";
+            // Validate the doctor ID
+            if (empty($doctorId)) {
+                return json_encode([
+                    'success' => false,
+                    'message' => 'Doctor ID is required'
+                ]);
+            }
+
+            // Query to fetch reviews by doctor ID
+            $query = "SELECT * FROM reviews WHERE doctor_id = :doctor_id";
             $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':doctor_id', $doctorId, PDO::PARAM_INT);
             $stmt->execute();
 
             $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            if (empty($reviews)) {
+                return json_encode([
+                    'success' => false,
+                    'message' => 'No reviews found for this doctor'
+                ]);
+            }
+
             return json_encode([
                 'success' => true,
-                'message' => 'Successful',
+                'message' => 'Reviews retrieved successfully',
                 'data' => $reviews
             ]);
         } catch (PDOException $e) {
             return json_encode([
                 'success' => false,
-                'message' => 'Not found',
+                'message' => 'Failed to retrieve reviews',
                 'error' => $e->getMessage()
             ]);
         }
     }
 
     // Function to create a new review
-    // Function to create a new review
     public function createReview($reviewData, $doctorId, $userId)
     {
         // Validate required fields
         if (empty($doctorId) || empty($userId) || empty($reviewData['reviewText']) || empty($reviewData['rating'])) {
-
-
-            return json_encode(['success' => false, 'message' => 'Doctor ID, User ID, comment, or rating is missing']);
+            return json_encode(['success' => false, 'message' => 'Doctor ID, User ID, review text, or rating is missing']);
         }
 
         // Set new review data
@@ -69,15 +83,11 @@ class ReviewController
 
             // Save the new review
             if ($stmt->execute()) {
-                // Fetch the inserted review ID
                 $newReviewId = $this->conn->lastInsertId();
-
-                // Associate the review with the doctor (if needed)
-                // $this->updateDoctorReviews($doctorId, $newReviewId);
 
                 return json_encode([
                     'success' => true,
-                    'message' => 'Review submitted',
+                    'message' => 'Review submitted successfully',
                     'data' => $newReview
                 ]);
             } else {
@@ -95,20 +105,16 @@ class ReviewController
         }
     }
 
-
-
-    // Function to update doctor's reviews
+    // Optional: Function to update doctor's reviews (if needed)
     private function updateDoctorReviews($doctorId, $reviewId)
     {
         try {
-            // Add the review ID to the doctor's reviews array
             $query = "UPDATE doctors SET reviews = JSON_ARRAY_APPEND(reviews, '$', :reviewId) WHERE id = :doctorId";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':reviewId', $reviewId);
             $stmt->bindParam(':doctorId', $doctorId);
             $stmt->execute();
         } catch (PDOException $e) {
-            // Handle error if updating doctor fails
             echo json_encode([
                 'success' => false,
                 'message' => 'Failed to update doctor reviews',
