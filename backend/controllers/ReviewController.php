@@ -15,7 +15,7 @@ class ReviewController
         $this->conn = $database->connect();
     }
 
-    // Function to get reviews by doctor ID
+    // Function to get reviews by doctor ID along with reviewer name
     public function getReviewsByDoctorId($doctorId)
     {
         try {
@@ -27,8 +27,17 @@ class ReviewController
                 ]);
             }
 
-            // Query to fetch reviews by doctor ID
-            $query = "SELECT * FROM reviews WHERE doctor_id = :doctor_id";
+            // Query to fetch reviews and user details by doctor ID
+            $query = "
+                SELECT 
+                    reviews.id, reviews.reviewText, reviews.rating, 
+                    reviews.created_at, reviews.updated_at, 
+                    users.name AS reviewer_name, users.email AS reviewer_email 
+                FROM reviews 
+                JOIN users ON reviews.user_id = users.id
+                WHERE reviews.doctor_id = :doctor_id
+            ";
+
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':doctor_id', $doctorId, PDO::PARAM_INT);
             $stmt->execute();

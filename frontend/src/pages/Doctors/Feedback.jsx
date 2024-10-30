@@ -44,8 +44,12 @@ const Feedback = () => {
 
                                 <div>
                                     <h5 className="text-[16px] leading-6 text-primaryColor font-bold">
-                                        {review.user_name || 'Anonymous'}
+                                        {review.reviewer_name || 'Anonymous'}
                                     </h5>
+                                    <h5 className="text-[14px] leading-6 text-gray-700 italic">
+                                        {review.reviewer_email || 'Anonymous'}
+                                    </h5>
+
                                     <p className="text-[14px] leading-6 text-textColor">
                                         {formatDate(review.created_at)}
                                     </p>
@@ -56,7 +60,7 @@ const Feedback = () => {
                             </div>
 
                             <div className="flex gap-1">
-                            {[...Array(Math.min(Math.max(Number(review.rating), 0), 5))].map((_, index) => (
+                                {[...Array(Math.min(Math.max(Number(review.rating), 0), 5))].map((_, index) => (
                                     <AiFillStar key={index} color="#0067FF" />
                                 ))}
                             </div>
