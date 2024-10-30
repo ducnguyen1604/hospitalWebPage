@@ -1,89 +1,66 @@
 import React, { useState } from 'react';
+import FeedbackForm from './FeedbackForm';
+import useFetchData from '../../hooks/useFetchData.jsx';
+import { useParams } from 'react-router-dom';
 import { formatDate } from '../../utils/formatDate';
 import avatar from '../../assets/images/avatar-icon.png';
 import { AiFillStar } from 'react-icons/ai';
-import FeedbackForm from './FeedbackForm';
-import useFetchData from '../../hooks/useFetchData.jsx'; // Adjust path as needed
-import { useParams } from 'react-router-dom';
 
 const Feedback = () => {
-    const [showFeedbackForm, setShowFeedbackForm] = useState(false);
     const { doctorId } = useParams();
-
-    const { data: reviews = [], loading, error } = useFetchData(
+    const { data: reviews, setData: setReviews, loading, error } = useFetchData(
         `http://localhost/hospitalWebPage/backend/api/v1/doctors/${doctorId}/reviews`
     );
 
-    console.log(reviews);
+    const handleFeedbackSubmitted = (newReview) => {
+        setReviews((prevReviews) => [...prevReviews, newReview]);
+    };
 
-    if (loading) {
-        return <p>Loading reviews...</p>;
-    }
-
-    if (error) {
-        return <p>Error: {error}</p>;
-    }
+    if (loading) return <p>Loading reviews...</p>;
+    if (error) return <p>Error: {error}</p>;
 
     return (
         <div>
-            <div className="mb-[50px] mt-4">
-                <h4 className="text-[20px] leading-[30px] font-bold text-headingColor mb-[30px]">
-                    All reviews ({reviews ? reviews.length : 0})
-                </h4>
+            <h4 className="text-[20px] leading-[30px] font-bold text-headingColor mb-[30px] mt-[15px]">
+                All reviews ({reviews.length})
+            </h4>
 
-                {reviews && reviews.length > 0 ? (
-                    reviews.map((review) => (
-                        <div
-                            key={review.id}
-                            className="flex justify-between gap-10 mb-[30px]"
-                        >
-                            <div className="flex gap-3">
-                                <figure className="w-10 h-10 rounded-full">
-                                    <img className="w-full" src={avatar} alt="avatar" />
-                                </figure>
+            {reviews.map((review) => (
+                <div key={review.id} className="flex justify-between gap-10 mb-[30px]">
+                    <div className="flex gap-3">
+                        <figure className="w-10 h-10 rounded-full">
+                            <img className="w-full" src={avatar} alt="avatar" />
+                        </figure>
 
-                                <div>
-                                    <h5 className="text-[16px] leading-6 text-primaryColor font-bold">
-                                        {review.reviewer_name || 'Anonymous'}
-                                    </h5>
-                                    <h5 className="text-[14px] leading-6 text-gray-700 italic">
-                                        {review.reviewer_email || 'Anonymous'}
-                                    </h5>
-
-                                    <p className="text-[14px] leading-6 text-textColor">
-                                        {formatDate(review.created_at)}
-                                    </p>
-                                    <p className="text__para mt-3 font-medium text-[15px]">
-                                        {review.reviewText}
-                                    </p>
+                        <div>
+                            {/* Reviewer name and stars in the same line */}
+                            <div className="flex items-center gap-2">
+                                <p className="text-[16px] leading-6 text-primaryColor font-bold">
+                                    {review.reviewer_name || 'Anonymous'}
+                                </p>
+                                <div className="flex">
+                                    {[...Array(Number(review.rating))].map((_, index) => (
+                                        <AiFillStar key={index} color="#0067FF" />
+                                    ))}
                                 </div>
                             </div>
 
-                            <div className="flex gap-1">
-                                {[...Array(Math.min(Math.max(Number(review.rating), 0), 5))].map((_, index) => (
-                                    <AiFillStar key={index} color="#0067FF" />
-                                ))}
-                            </div>
+                            <p className="text-[16px] font-bold">
+                                {review.reviewer_email || 'Anonymous'}
+                            </p>
+                            <p className="text-[14px] leading-6 text-textColor">
+                                {formatDate(review.created_at)}
+                            </p>
+
+                            <p className="text__para mt-3 font-medium text-[15px]">
+                                {review.reviewText}
+                            </p>
                         </div>
-                    ))
-                ) : (
-                    <p>No reviews available.</p>
-                )}
-
-            </div>
-
-            {!showFeedbackForm && (
-                <div className="text-center">
-                    <button
-                        className="btn"
-                        onClick={() => setShowFeedbackForm(true)}
-                    >
-                        Give Feedback
-                    </button>
+                    </div>
                 </div>
-            )}
+            ))}
 
-            {showFeedbackForm && <FeedbackForm />}
+            <FeedbackForm doctorId={doctorId} onFeedbackSubmitted={handleFeedbackSubmitted} />
         </div>
     );
 };
