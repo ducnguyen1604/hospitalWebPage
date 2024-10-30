@@ -18,7 +18,7 @@ const NotFound = () => {
             </p>
             <button
                 onClick={handleGoHome}
-                className="px-6 py-3 bg-blue-600 text-white rounded-md text-lg font-semibold hover:bg-blue-700 transition duration-150 ease-in-out"
+                className="btn"
             >
                 Go to Home Page
             </button>
