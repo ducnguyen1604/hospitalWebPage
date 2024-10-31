@@ -87,7 +87,7 @@ const FloatingChatbot = () => {
         bottom: "20px",
         right: "20px",
         zIndex: 1000,
-        width: isOpen ? "300px" : "50px",
+        width: isOpen ? "350px" : "50px",
         height: isOpen ? "400px" : "50px",
         backgroundColor: "white",
         borderRadius: "10px",
@@ -105,7 +105,7 @@ const FloatingChatbot = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#007BFF", // Light blue header
+          backgroundColor: "darkblue", // Light blue header
           color: "white",
           fontWeight: "bold",
           borderBottom: "1px solid #ddd",
@@ -151,7 +151,7 @@ const FloatingChatbot = () => {
                   </strong>
                   {message.text}
                   {message.uri && (
-                    <div style={{ marginTop: "5px" }}>
+                    <div style={{ marginTop: "5px", color: "#007BFF" }}>
                       <a
                         href={message.uri}
                         target="_blank"
@@ -159,9 +159,10 @@ const FloatingChatbot = () => {
                         style={{
                           color: "#007BFF",
                           textDecoration: "underline",
+                          fontWeight: "bold",
                         }}
                       >
-                        Doctor's Profile
+                        View Doctor's Profile
                       </a>
                     </div>
                   )}
@@ -180,18 +181,19 @@ const FloatingChatbot = () => {
                         fontSize: "12px",
                       }}
                     >
-                      🔊 Read Aloud
+                      🔊 🔊 🔊 Read Aloud
                     </button>
                   )}
                 </div>
               </div>
             ))}
           </div>
+
           <input
             type="text"
             value={userMessage}
             onChange={(e) => setUserMessage(e.target.value)}
-            placeholder="Type your message..."
+            placeholder="Ask us anything..."
             style={{
               flex: "0",
               padding: "10px",
@@ -211,7 +213,8 @@ const FloatingChatbot = () => {
               borderRadius: "20px",
               cursor: "pointer",
               fontWeight: "bold",
-              marginRight: "10px",
+
+              marginBottom: "5px",
             }}
           >
             🎤 Speak
@@ -220,7 +223,7 @@ const FloatingChatbot = () => {
             onClick={handleSendMessage}
             style={{
               padding: "10px",
-              backgroundColor: "#007BFF", // Light blue button
+              backgroundColor: "darkblue",
               color: "white",
               border: "none",
               borderRadius: "20px",
@@ -228,7 +231,7 @@ const FloatingChatbot = () => {
               fontWeight: "bold",
             }}
           >
-            Send
+            ➤ Send
           </button>
         </div>
       )}
