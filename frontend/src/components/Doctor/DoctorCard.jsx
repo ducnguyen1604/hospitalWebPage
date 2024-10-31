@@ -1,11 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import starIcon from '../../assets/images/Star.png';
-import { BsArrowRight } from 'react-icons/bs';
+import React from "react";
+import { Link } from "react-router-dom";
+import starIcon from "../../assets/images/Star.png";
+import { BsArrowRight } from "react-icons/bs";
 
 const DoctorCard = ({ doctor }) => {
   const { id, name, avgRating, totalRating, specialization, photo } = doctor;
   console.log(doctor);
+  const randomRating = (Math.random() * (5 - 3) + 3).toFixed(1);
+  const randomTotalRating = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
 
   return (
     <div className="p-3 lg:p-2">
@@ -34,10 +36,10 @@ const DoctorCard = ({ doctor }) => {
         </span>
         <div className="flex items-center gap-[6px] mt-3">
           <span className="flex items-center gap-[6px] text-[14px] leading-6 lg:text-[16px] lg:leading-7 font-semibold text-headingColor">
-            <img src={starIcon} alt="" /> {avgRating}
+            <img src={starIcon} alt="" /> {randomRating}
           </span>
           <span className="text-[14px] leading-6 lg:text-[16px] lg:leading-7 font-[400] text-textColor">
-            ({totalRating})
+            ({randomTotalRating})
           </span>
         </div>
       </div>

@@ -16,10 +16,8 @@ class BookingController
 
     public function postTimeSlots($doctorId)
     {
-        // Assuming timeSlots come from an HTTP POST request
         $timeSlots = json_decode(file_get_contents('php://input'), true);
 
-        // Check if timeSlots are provided
         if (empty($timeSlots)) {
             echo json_encode([
                 'success' => false,
@@ -29,43 +27,61 @@ class BookingController
         }
 
         try {
-            // Prepare the SQL query for inserting time slots
-            $query = "INSERT INTO bookings (doctor_id, user_id, ticket_price, appointment_date, start_time, end_time, status, is_paid) 
-                  VALUES (:doctor_id, :user_id, :ticket_price, :appointment_date, :start_time, :end_time, :status, :is_paid)";
+            $checkOverlapQuery = "
+                SELECT COUNT(*) AS overlap_count 
+                FROM bookings 
+                WHERE doctor_id = :doctor_id 
+                  AND appointment_date = :appointment_date 
+                  AND (
+                      (start_time < :end_time AND end_time > :start_time)
+                  )";
 
-            $stmt = $this->conn->prepare($query);
+            $stmtCheck = $this->conn->prepare($checkOverlapQuery);
+            $query = "INSERT INTO bookings (doctor_id, user_id, ticket_price, appointment_date, start_time, end_time, status, is_paid) 
+                      VALUES (:doctor_id, :user_id, :ticket_price, :appointment_date, :start_time, :end_time, :status, :is_paid)";
+            $stmtInsert = $this->conn->prepare($query);
+
             $successMessages = [];
             $failedMessages = [];
+            $conflictMessages = [];
 
-            // Loop through each time slot and insert it
             foreach ($timeSlots as $slot) {
-                $userId = !empty($slot['user_id']) ? $slot['user_id'] : 0;  // Use default value 0 if user_id is null
+                $userId = !empty($slot['user_id']) ? $slot['user_id'] : 0;
 
-                // Bind parameters
-                $stmt->bindParam(':doctor_id', $doctorId);
-                $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);  // Always pass an integer, even if 0
-                $stmt->bindParam(':ticket_price', $slot['ticket_price']);
-                $stmt->bindParam(':appointment_date', $slot['date']);
-                $stmt->bindParam(':start_time', $slot['startingTime']);
-                $stmt->bindParam(':end_time', $slot['endingTime']);
-                $stmt->bindValue(':status', 'pending');
-                $stmt->bindValue(':is_paid', 0);
+                $stmtCheck->bindParam(':doctor_id', $doctorId, PDO::PARAM_INT);
+                $stmtCheck->bindParam(':appointment_date', $slot['date']);
+                $stmtCheck->bindParam(':start_time', $slot['startingTime']);
+                $stmtCheck->bindParam(':end_time', $slot['endingTime']);
+                $stmtCheck->execute();
+                $overlap = $stmtCheck->fetch(PDO::FETCH_ASSOC)['overlap_count'];
 
-                // Execute the query for each time slot
-                if ($stmt->execute()) {
+                if ($overlap > 0) {
+                    $conflictMessages[] = "Conflict for " . $slot['date'] . " from " . $slot['startingTime'] . " to " . $slot['endingTime'] . ".";
+                    continue;
+                }
+
+                $stmtInsert->bindParam(':doctor_id', $doctorId, PDO::PARAM_INT);
+                $stmtInsert->bindParam(':user_id', $userId, PDO::PARAM_INT);
+                $stmtInsert->bindParam(':ticket_price', $slot['ticket_price']);
+                $stmtInsert->bindParam(':appointment_date', $slot['date']);
+                $stmtInsert->bindParam(':start_time', $slot['startingTime']);
+                $stmtInsert->bindParam(':end_time', $slot['endingTime']);
+                $stmtInsert->bindValue(':status', 'pending');
+                $stmtInsert->bindValue(':is_paid', 0);
+
+                if ($stmtInsert->execute()) {
                     $successMessages[] = "Time slot for " . $slot['date'] . " successfully added.";
                 } else {
                     $failedMessages[] = "Failed to add time slot for " . $slot['date'] . ".";
                 }
             }
 
-
-            // Return success and failure messages as JSON
             echo json_encode([
-                'success' => true,
+                'success' => empty($conflictMessages), // success is false if there are conflicts
                 'message' => 'All time slots have been processed.',
                 'added' => $successMessages,
-                'failed' => $failedMessages
+                'failed' => $failedMessages,
+                'conflicts' => $conflictMessages // Include conflict messages
             ]);
         } catch (PDOException $e) {
             echo json_encode([
@@ -74,6 +90,8 @@ class BookingController
             ]);
         }
     }
+
+
 
     // Function to fetch all bookings by doctor ID with user info
     public function getBookingsWithUserInfo($doctorId)

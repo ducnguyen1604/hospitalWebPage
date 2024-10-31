@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess as a prop
+const TimePosting = ({ doctorData, onPostSuccess }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,13 +30,11 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
     }
   }, [doctorData]);
 
-  // Handle input change for basic fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
-  // Add a new time slot
   const addTimeSlot = (e) => {
     e.preventDefault();
     addItems("timeSlots", {
@@ -53,7 +51,6 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
     }));
   };
 
-  // Handle date and time changes
   const handleTimeSlotChange = (index, event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => {
@@ -77,7 +74,6 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
     });
   };
 
-  // Handle file input change
   const handleFileInputChange = async (event) => {
     const file = event.target.files[0];
     const data = await uploadImageToCloudinary(file);
@@ -88,7 +84,6 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
     }));
   };
 
-  // Reusable function for deleting item
   const deleteItem = (key, index) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -101,80 +96,102 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
     deleteItem("timeSlots", index);
   };
 
-  const submitTimeSlots = async (e) => {
-  e.preventDefault();
-
-  if (!doctorData?.doctor?.id) {
-    toast.error("Doctor data is not loaded. Please try again.");
-    return;
-  }
-
-  if (formData.timeSlots.length === 0) {
-    toast.error("Please add at least one time slot before submitting.");
-    return;
-  }
-
-  // Validate each time slot
-  for (const slot of formData.timeSlots) {
-    if (!slot.date || !slot.startingTime || !slot.endingTime) {
-      toast.error("Please fill out all fields for each time slot.");
-      return;
-    }
-
-    // Check if the start time is before the end time
-    if (slot.startingTime >= slot.endingTime) {
-      toast.error("End time cannot be before or equal to the start time.");
-      return;
-    }
-  }
-
-  try {
-    const timeSlotsData = formData.timeSlots.map((slot) => {
-      const formattedDate =
-        `${slot.date.getFullYear()}-${String(slot.date.getMonth() + 1).padStart(2, '0')}-${String(slot.date.getDate()).padStart(2, '0')}`;
-
-      return {
-        user_id: slot.user_id || null, // Send null if user_id is empty
-        ticket_price: formData.ticketPrice || "100.00",
-        date: formattedDate,
-        startingTime: slot.startingTime,
-        endingTime: slot.endingTime,
-      };
-    });
-
-    const res = await fetch(
-      `${BASE_URL}/bookings/doctors/${doctorData.doctor.id}/timeSlots`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(timeSlotsData),
+  // Helper function to check for time conflicts within timeSlots
+  const hasTimeConflict = (timeSlots) => {
+    for (let i = 0; i < timeSlots.length; i++) {
+      for (let j = i + 1; j < timeSlots.length; j++) {
+        const slotA = timeSlots[i];
+        const slotB = timeSlots[j];
+        if (
+          slotA.date.getTime() === slotB.date.getTime() && // Check same date
+          ((slotA.startingTime < slotB.endingTime &&
+            slotA.endingTime > slotB.startingTime) || // Check overlapping times
+            (slotB.startingTime < slotA.endingTime &&
+              slotB.endingTime > slotA.startingTime))
+        ) {
+          return true;
+        }
       }
-    );
+    }
+    return false;
+  };
 
-    if (!res.ok) {
-      const result = await res.json();
-      toast.error(result.message || "Failed to post time slots.");
+  const submitTimeSlots = async (e) => {
+    e.preventDefault();
+
+    if (!doctorData?.doctor?.id) {
+      toast.error("Doctor data is not loaded. Please try again.");
       return;
     }
 
-    toast.success("Time slots posted successfully!");
-
-    if (onPostSuccess) {
-      onPostSuccess();
+    if (formData.timeSlots.length === 0) {
+      toast.error("Please add at least one time slot before submitting.");
+      return;
     }
-  } catch (err) {
-    console.error("Error in submission: ", err);
-    toast.error("An error occurred while posting time slots.");
-  }
-};
 
-  
+    for (const slot of formData.timeSlots) {
+      if (!slot.date || !slot.startingTime || !slot.endingTime) {
+        toast.error("Please fill out all fields for each time slot.");
+        return;
+      }
 
+      if (slot.startingTime >= slot.endingTime) {
+        toast.error("End time cannot be before or equal to the start time.");
+        return;
+      }
+    }
 
+    try {
+      const timeSlotsData = formData.timeSlots.map((slot) => {
+        const formattedDate = `${slot.date.getFullYear()}-${String(
+          slot.date.getMonth() + 1
+        ).padStart(2, "0")}-${String(slot.date.getDate()).padStart(2, "0")}`;
 
+        return {
+          user_id: slot.user_id || null,
+          ticket_price: formData.ticketPrice || "100.00",
+          date: formattedDate,
+          startingTime: slot.startingTime,
+          endingTime: slot.endingTime,
+        };
+      });
+
+      const res = await fetch(
+        `${BASE_URL}/bookings/doctors/${doctorData.doctor.id}/timeSlots`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(timeSlotsData),
+        }
+      );
+
+      const result = await res.json();
+
+      if (result.conflicts && result.conflicts.length > 0) {
+        result.conflicts.forEach((conflict) => {
+          toast.error(conflict); // Show each conflict as a toast message
+        });
+        return; // Stop further execution if there were conflicts
+      }
+
+      if (!res.ok) {
+        toast.error(result.message || "Failed to post time slots.");
+        return;
+      }
+
+      toast.success("Time slots posted successfully!");
+
+      if (onPostSuccess) {
+        onPostSuccess();
+      }
+    } catch (err) {
+      console.error("Error in submission: ", err);
+      toast.error("An error occurred while posting time slots.");
+    }
+  };
 
   return (
     <div>
@@ -204,9 +221,7 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
                     name="startingTime"
                     value={item.startingTime}
                     className="form__input"
-                    onChange={(e) =>
-                      handleTimeSlotChange(index, e)
-                    }
+                    onChange={(e) => handleTimeSlotChange(index, e)}
                   />
                 </div>
                 <div>
@@ -216,9 +231,7 @@ const TimePosting = ({ doctorData, onPostSuccess }) => {  // Add onPostSuccess a
                     name="endingTime"
                     value={item.endingTime}
                     className="form__input"
-                    onChange={(e) =>
-                      handleTimeSlotChange(index, e)
-                    }
+                    onChange={(e) => handleTimeSlotChange(index, e)}
                   />
                 </div>
                 <div className="flex items-center">
