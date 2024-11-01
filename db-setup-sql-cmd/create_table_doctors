@@ -1,0 +1,18 @@
+CREATE TABLE doctors (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) DEFAULT NULL,
+    password VARCHAR(255) DEFAULT NULL,
+    name VARCHAR(255) DEFAULT NULL,
+    specialization VARCHAR(255) DEFAULT NULL,
+    phone VARCHAR(20) DEFAULT NULL,
+    photo VARCHAR(255) DEFAULT NULL,
+    role ENUM('patient', 'doctor') DEFAULT NULL,
+    gender ENUM('male', 'female', 'other') DEFAULT NULL,
+    blood_type VARCHAR(3) DEFAULT NULL,
+    is_available TINYINT(1) DEFAULT NULL,
+    isApproved ENUM('pending', 'approved', 'cancelled') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    bio TEXT DEFAULT NULL,
+    ticket_price INT(200) DEFAULT NULL
+);

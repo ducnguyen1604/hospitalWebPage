@@ -1,0 +1,2 @@
+INSERT INTO doctors (email, password, name, specialization, phone, photo, role, gender, blood_type, is_available, isApproved, bio, ticket_price)
+VALUES ('doctor@example.com', 'securepassword123', 'Dr. John Doe', 'Cardiologist', '123-456-7890', 'doctor_photo.jpg', 'doctor', 'male', 'O+', 1, 'approved', 'Experienced cardiologist with over 10 years of practice.', 100);

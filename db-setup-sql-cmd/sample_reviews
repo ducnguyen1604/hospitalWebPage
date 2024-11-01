@@ -1,0 +1,2 @@
+INSERT INTO reviews (doctor_id, user_id, reviewText, rating)
+VALUES (1, 1, 'Dr. Doe provided excellent care and was very attentive.', 4.0);

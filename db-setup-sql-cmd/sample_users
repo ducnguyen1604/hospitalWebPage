@@ -1,0 +1,2 @@
+INSERT INTO users (email, name, gender, photo, blood_type, password, role)
+VALUES ('user@example.com', 'Jane Smith', 'female', 'user_photo.jpg', 'A+', 'securepassword123', 'patient');

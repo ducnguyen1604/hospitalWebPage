@@ -1,0 +1,2 @@
+INSERT INTO bookings (doctor_id, user_id, ticket_price, appointment_date, status, is_paid, start_time, end_time)
+VALUES (1, 1, '50.00', '2024-11-02 10:30:00', 'pending', 1, '10:30:00', '11:00:00');

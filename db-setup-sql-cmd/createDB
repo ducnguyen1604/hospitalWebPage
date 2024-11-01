@@ -1,0 +1,5 @@
+-- Create the database
+CREATE DATABASE doctor_booking;
+
+-- Switch to the new database
+USE doctor_booking;

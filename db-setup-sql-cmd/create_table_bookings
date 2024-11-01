@@ -1,0 +1,13 @@
+CREATE TABLE bookings (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    doctor_id INT(11) NOT NULL,
+    user_id INT(11),
+    ticket_price VARCHAR(100) NOT NULL,
+    appointment_date DATETIME,
+    status ENUM('pending', 'approved', 'cancelled') DEFAULT 'pending',
+    is_paid TINYINT(4) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    start_time TIME DEFAULT NULL,
+    end_time TIME DEFAULT NULL
+);
